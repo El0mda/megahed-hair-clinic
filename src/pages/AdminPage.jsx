@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Plus, Trash2, Edit, Eye, EyeOff, LogOut, Video, FileText, X, Check } from 'lucide-react';
 
 const ADMIN_PASSWORD = 'megahed2024';
@@ -13,6 +13,9 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [view, setView] = useState('list');
   const [editing, setEditing] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [videoFile, setVideoFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const [form, setForm] = useState({
     title_en: '', title_ar: '',
     content_en: '', content_ar: '',
@@ -48,21 +51,54 @@ export default function AdminPage() {
   const resetForm = () => {
     setForm({ title_en: '', title_ar: '', content_en: '', content_ar: '', cover_image: '', type: 'article', video_url: '', published: false });
     setEditing(null);
+    setImageFile(null);
+    setVideoFile(null);
     setView('list');
   };
 
   const openEdit = (post) => {
     setForm(post);
     setEditing(post.id);
+    setImageFile(null);
+    setVideoFile(null);
     setView('form');
   };
 
   const handleSave = async () => {
-    if (editing) {
-      await supabase.from('blogs').update(form).eq('id', editing);
-    } else {
-      await supabase.from('blogs').insert(form);
+    setUploading(true);
+    let updatedForm = { ...form };
+
+    // Upload image if selected
+    if (imageFile) {
+      const ext = imageFile.name.split('.').pop();
+      const path = `${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from('blog-images').upload(path, imageFile);
+      if (!error) {
+        const { data: urlData } = supabase.storage.from('blog-images').getPublicUrl(path);
+        updatedForm.cover_image = urlData.publicUrl;
+      }
     }
+
+    // Upload video if selected
+    if (videoFile) {
+      const ext = videoFile.name.split('.').pop();
+      const path = `${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from('blog-videos').upload(path, videoFile, { contentType: videoFile.type });
+      if (!error) {
+        const { data: urlData } = supabase.storage.from('blog-videos').getPublicUrl(path);
+        updatedForm.video_url = urlData.publicUrl;
+      }
+    }
+
+    if (editing) {
+      await supabase.from('blogs').update(updatedForm).eq('id', editing);
+    } else {
+      await supabase.from('blogs').insert(updatedForm);
+    }
+
+    setUploading(false);
+    setImageFile(null);
+    setVideoFile(null);
     fetchPosts();
     resetForm();
   };
@@ -153,26 +189,62 @@ export default function AdminPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold mb-1" style={{ color: '#1e3a6e' }}>Title (English)</label>
-                <input value={form.title_en} onChange={e => setForm(f => ({ ...f, title_en: e.target.value }))} className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#1e3a6e]" />
+                <input
+                  value={form.title_en}
+                  onChange={e => setForm(f => ({ ...f, title_en: e.target.value }))}
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#1e3a6e]"
+                />
               </div>
               <div>
                 <label className="block text-xs font-semibold mb-1" style={{ color: '#1e3a6e' }}>Title (Arabic)</label>
-                <input dir="rtl" value={form.title_ar} onChange={e => setForm(f => ({ ...f, title_ar: e.target.value }))} className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#1e3a6e]" />
+                <input
+                  dir="rtl"
+                  value={form.title_ar}
+                  onChange={e => setForm(f => ({ ...f, title_ar: e.target.value }))}
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#1e3a6e]"
+                />
               </div>
             </div>
 
             {/* Cover image */}
             <div>
-              <label className="block text-xs font-semibold mb-1" style={{ color: '#1e3a6e' }}>Cover Image URL</label>
-              <input value={form.cover_image} onChange={e => setForm(f => ({ ...f, cover_image: e.target.value }))} placeholder="https://..." className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#1e3a6e]" />
-              {form.cover_image && <img src={form.cover_image} alt="preview" className="mt-2 h-32 rounded-xl object-cover" />}
+              <label className="block text-xs font-semibold mb-1" style={{ color: '#1e3a6e' }}>Cover Image</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={e => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    setImageFile(file);
+                    setForm(f => ({ ...f, cover_image: URL.createObjectURL(file) }));
+                  }
+                }}
+                className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#1e3a6e]"
+              />
+              {form.cover_image && (
+                <img src={form.cover_image} alt="preview" className="mt-2 h-32 rounded-xl object-cover" />
+              )}
             </div>
 
-            {/* Video URL */}
+            {/* Video file */}
             {form.type === 'video' && (
               <div>
-                <label className="block text-xs font-semibold mb-1" style={{ color: '#1e3a6e' }}>Video URL (YouTube embed)</label>
-                <input value={form.video_url} onChange={e => setForm(f => ({ ...f, video_url: e.target.value }))} placeholder="https://www.youtube.com/embed/..." className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#1e3a6e]" />
+                <label className="block text-xs font-semibold mb-1" style={{ color: '#1e3a6e' }}>Video File</label>
+                <input
+                  type="file"
+                  accept="video/*"
+                  onChange={e => {
+                    const file = e.target.files[0];
+                    if (file) setVideoFile(file);
+                  }}
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#1e3a6e]"
+                />
+                {videoFile && (
+                  <p className="text-xs mt-1" style={{ color: '#7a96c2' }}>Selected: {videoFile.name}</p>
+                )}
+                {!videoFile && form.video_url && (
+                  <p className="text-xs mt-1" style={{ color: '#7a96c2' }}>Current video already uploaded</p>
+                )}
               </div>
             )}
 
@@ -181,16 +253,27 @@ export default function AdminPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold mb-1" style={{ color: '#1e3a6e' }}>Content (English)</label>
-                  <textarea rows={8} value={form.content_en} onChange={e => setForm(f => ({ ...f, content_en: e.target.value }))} className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#1e3a6e] resize-none" />
+                  <textarea
+                    rows={8}
+                    value={form.content_en}
+                    onChange={e => setForm(f => ({ ...f, content_en: e.target.value }))}
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#1e3a6e] resize-none"
+                  />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold mb-1" style={{ color: '#1e3a6e' }}>Content (Arabic)</label>
-                  <textarea dir="rtl" rows={8} value={form.content_ar} onChange={e => setForm(f => ({ ...f, content_ar: e.target.value }))} className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#1e3a6e] resize-none" />
+                  <textarea
+                    dir="rtl"
+                    rows={8}
+                    value={form.content_ar}
+                    onChange={e => setForm(f => ({ ...f, content_ar: e.target.value }))}
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#1e3a6e] resize-none"
+                  />
                 </div>
               </div>
             )}
 
-            {/* Published */}
+            {/* Published toggle */}
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setForm(f => ({ ...f, published: !f.published }))}
@@ -207,14 +290,24 @@ export default function AdminPage() {
               </span>
             </div>
 
-            {/* Save */}
+            {/* Save button */}
             <button
               onClick={handleSave}
-              className="w-full py-3 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2"
-              style={{ background: '#1e3a6e' }}
+              disabled={uploading}
+              className="w-full py-3 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2 transition-all"
+              style={{ background: uploading ? '#7a96c2' : '#1e3a6e' }}
             >
-              <Check className="w-4 h-4" />
-              {editing ? 'Save Changes' : 'Create Post'}
+              {uploading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Check className="w-4 h-4" />
+                  {editing ? 'Save Changes' : 'Create Post'}
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -274,8 +367,12 @@ export default function AdminPage() {
                 className="bg-white rounded-2xl p-5 flex items-center gap-4"
                 style={{ border: '1px solid #d0ddf0' }}
               >
-                {post.cover_image && (
+                {post.cover_image ? (
                   <img src={post.cover_image} alt={post.title_en} className="w-16 h-16 rounded-xl object-cover flex-shrink-0" />
+                ) : (
+                  <div className="w-16 h-16 rounded-xl flex-shrink-0 flex items-center justify-center" style={{ background: '#e8eef8' }}>
+                    {post.type === 'video' ? <Video className="w-6 h-6" style={{ color: '#1e3a6e' }} /> : <FileText className="w-6 h-6" style={{ color: '#1e3a6e' }} />}
+                  </div>
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
@@ -296,13 +393,13 @@ export default function AdminPage() {
                   <p className="text-xs truncate" style={{ color: '#7a96c2' }}>{post.title_ar}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button onClick={() => togglePublish(post)} className="p-2 rounded-lg hover:bg-gray-100 transition">
+                  <button onClick={() => togglePublish(post)} className="p-2 rounded-lg hover:bg-gray-100 transition" title={post.published ? 'Unpublish' : 'Publish'}>
                     {post.published ? <EyeOff className="w-4 h-4 text-gray-400" /> : <Eye className="w-4 h-4 text-gray-400" />}
                   </button>
-                  <button onClick={() => openEdit(post)} className="p-2 rounded-lg hover:bg-gray-100 transition">
+                  <button onClick={() => openEdit(post)} className="p-2 rounded-lg hover:bg-gray-100 transition" title="Edit">
                     <Edit className="w-4 h-4 text-gray-400" />
                   </button>
-                  <button onClick={() => handleDelete(post.id)} className="p-2 rounded-lg hover:bg-gray-100 transition">
+                  <button onClick={() => handleDelete(post.id)} className="p-2 rounded-lg hover:bg-gray-100 transition" title="Delete">
                     <Trash2 className="w-4 h-4 text-red-400" />
                   </button>
                 </div>

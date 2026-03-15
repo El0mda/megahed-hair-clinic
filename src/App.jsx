@@ -9,6 +9,8 @@ import AboutPage from '@/pages/AboutPage';
 import AppointmentBookingPage from '@/pages/AppointmentBookingPage';
 import ContactPage from '@/pages/ContactPage';
 import AdminPage from '@/pages/AdminPage';
+import BlogsPage from '@/pages/BlogsPage';
+import BlogPostPage from '@/pages/BlogPostPage';
 import { Toaster } from '@/components/ui/toaster';
 import { LangSplash, useLang } from '@/components/Header';
 import { motion } from 'framer-motion';
@@ -47,16 +49,18 @@ function AppContent() {
 
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<HomePage />} />
-          <Route path="services" element={<ServicesPage />} />
-          <Route path="before-after" element={<BeforeAfterPage />} />
-          <Route path="about" element={<AboutPage />} />
-          <Route path="book-appointment" element={<AppointmentBookingPage />} />
-          <Route path="contact" element={<ContactPage />} />
-          <Route path="/admin" element={<AdminPage />} />
-        </Route>
-      </Routes>
+  <Route path="/" element={<MainLayout />}>
+    <Route index element={<HomePage />} />
+    <Route path="services" element={<ServicesPage />} />
+    <Route path="before-after" element={<BeforeAfterPage />} />
+    <Route path="about" element={<AboutPage />} />
+    <Route path="book-appointment" element={<AppointmentBookingPage />} />
+    <Route path="contact" element={<ContactPage />} />
+    <Route path="blogs" element={<BlogsPage />} />
+    <Route path="blogs/:id" element={<BlogPostPage />} />
+  </Route>
+  <Route path="/admin" element={<AdminPage />} />
+</Routes>
       <Toaster />
 
       {/* WhatsApp floating button — visible on all pages */}

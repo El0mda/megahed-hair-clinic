@@ -80,11 +80,11 @@ export function LangSplash() {
 
 const translations = {
   en: {
-    nav: ['Home', 'Services', 'Before/After', 'About', 'Hair Transplant'],
+    nav: ['Home', 'Services', 'Before/After', 'About', 'Blog', 'Hair Transplant'],
     book: 'Book Appointment',
   },
   ar: {
-    nav: ['الرئيسية', 'الخدمات', 'قبل وبعد', 'عن الدكتور', 'زراعة الشعر'],
+    nav: ['الرئيسية', 'الخدمات', 'قبل وبعد', 'عن الدكتور', 'المدونة', 'زراعة الشعر'],
     book: 'احجز موعد',
   },
 };
@@ -95,7 +95,7 @@ function Header() {
   const location = useLocation();
   const t = translations[lang];
 
-  const navPaths = ['/', '/services', '/before-after', '/about', '/contact'];
+  const navPaths = ['/', '/services', '/before-after', '/about', '/blogs', '/contact'];
   const isActive = (path) => location.pathname === path;
 
   return (
