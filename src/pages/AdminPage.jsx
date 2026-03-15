@@ -21,6 +21,8 @@ export default function AdminPage() {
     content_en: '', content_ar: '',
     cover_image: '', type: 'article',
     video_url: '', published: false,
+    author: 'Dr. Ahmed Megahed',
+    reading_time: '',
   });
 
   useEffect(() => {
@@ -49,7 +51,14 @@ export default function AdminPage() {
   };
 
   const resetForm = () => {
-    setForm({ title_en: '', title_ar: '', content_en: '', content_ar: '', cover_image: '', type: 'article', video_url: '', published: false });
+    setForm({
+      title_en: '', title_ar: '',
+      content_en: '', content_ar: '',
+      cover_image: '', type: 'article',
+      video_url: '', published: false,
+      author: 'Dr. Ahmed Megahed',
+      reading_time: '',
+    });
     setEditing(null);
     setImageFile(null);
     setVideoFile(null);
@@ -57,7 +66,11 @@ export default function AdminPage() {
   };
 
   const openEdit = (post) => {
-    setForm(post);
+    setForm({
+      ...post,
+      author: post.author || 'Dr. Ahmed Megahed',
+      reading_time: post.reading_time || '',
+    });
     setEditing(post.id);
     setImageFile(null);
     setVideoFile(null);
@@ -201,6 +214,28 @@ export default function AdminPage() {
                   dir="rtl"
                   value={form.title_ar}
                   onChange={e => setForm(f => ({ ...f, title_ar: e.target.value }))}
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#1e3a6e]"
+                />
+              </div>
+            </div>
+
+            {/* Author + Reading Time */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold mb-1" style={{ color: '#1e3a6e' }}>Author</label>
+                <input
+                  value={form.author}
+                  readOnly
+                  className="w-full border-2 rounded-xl px-4 py-2.5 text-sm bg-gray-50"
+                  style={{ borderColor: '#e8eef8', color: '#1e3a6e' }}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold mb-1" style={{ color: '#1e3a6e' }}>Estimated Reading Time</label>
+                <input
+                  placeholder="e.g. 5 min read"
+                  value={form.reading_time}
+                  onChange={e => setForm(f => ({ ...f, reading_time: e.target.value }))}
                   className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#1e3a6e]"
                 />
               </div>
@@ -388,9 +423,15 @@ export default function AdminPage() {
                     >
                       {post.published ? 'Published' : 'Draft'}
                     </span>
+                    {post.reading_time && (
+                      <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: '#f0f4fa', color: '#5a7099' }}>
+                        {post.reading_time}
+                      </span>
+                    )}
                   </div>
                   <p className="font-semibold text-sm truncate" style={{ color: '#1e3a6e' }}>{post.title_en || 'Untitled'}</p>
                   <p className="text-xs truncate" style={{ color: '#7a96c2' }}>{post.title_ar}</p>
+                  <p className="text-xs mt-0.5" style={{ color: '#a0b4cc' }}>By {post.author || 'Dr. Ahmed Megahed'}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <button onClick={() => togglePublish(post)} className="p-2 rounded-lg hover:bg-gray-100 transition" title={post.published ? 'Unpublish' : 'Publish'}>

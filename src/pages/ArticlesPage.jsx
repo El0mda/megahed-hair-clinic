@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useLang } from '@/components/Header';
 import { motion } from 'framer-motion';
-import { FileText, Calendar } from 'lucide-react';
+import { FileText, Calendar, User, Clock } from 'lucide-react';
 
 export default function ArticlesPage() {
   const { isAr } = useLang();
@@ -65,6 +65,7 @@ export default function ArticlesPage() {
                     className="block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all"
                     style={{ border: '1px solid #d0ddf0' }}
                   >
+                    {/* Cover image */}
                     {post.cover_image ? (
                       <img src={post.cover_image} alt={isAr ? post.title_ar : post.title_en} className="w-full h-48 object-cover" />
                     ) : (
@@ -72,6 +73,30 @@ export default function ArticlesPage() {
                         <FileText className="w-12 h-12" style={{ color: '#1e3a6e', opacity: 0.4 }} />
                       </div>
                     )}
+
+                    {/* Meta row — below image, above title */}
+                    <div className="flex flex-wrap items-center gap-3 px-5 pt-4 pb-2" style={{ borderBottom: '1px solid #e8eef8' }}>
+                      <div className="flex items-center gap-1" style={{ color: '#a0b4cc' }}>
+                        <User className="w-3 h-3" />
+                        <span className="text-xs font-medium">
+                          {isAr ? 'د. أحمد مجاهد' : (post.author || 'Dr. Ahmed Megahed')}
+                        </span>
+                      </div>
+                      {post.reading_time && (
+                        <div className="flex items-center gap-1" style={{ color: '#a0b4cc' }}>
+                          <Clock className="w-3 h-3" />
+                          <span className="text-xs">{post.reading_time}</span>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-1 ml-auto" style={{ color: '#a0b4cc' }}>
+                        <Calendar className="w-3 h-3" />
+                        <span className="text-xs">
+                          {new Date(post.created_at).toLocaleDateString(isAr ? 'ar-EG' : 'en-GB')}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Title + excerpt */}
                     <div className="p-5">
                       <span className="text-xs px-2 py-0.5 rounded-full font-medium inline-block mb-3" style={{ background: '#e8eef8', color: '#1e3a6e' }}>
                         {isAr ? 'مقال' : 'Article'}
@@ -82,12 +107,6 @@ export default function ArticlesPage() {
                       <p className="text-sm line-clamp-3" style={{ color: '#7a96c2' }}>
                         {isAr ? post.content_ar : post.content_en}
                       </p>
-                      <div className="flex items-center gap-1 mt-4" style={{ color: '#a0b4cc' }}>
-                        <Calendar className="w-3 h-3" />
-                        <span className="text-xs">
-                          {new Date(post.created_at).toLocaleDateString(isAr ? 'ar-EG' : 'en-GB')}
-                        </span>
-                      </div>
                     </div>
                   </Link>
                 </motion.div>

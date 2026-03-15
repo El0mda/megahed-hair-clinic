@@ -34,35 +34,35 @@ function HomePage() {
   ];
 
   const services = [
-    {
-      titleEn: 'Comprehensive hair assessment',
-      titleAr: 'الاستشارة',
-      descEn: 'Personalized assessment and treatment planning for your specific needs.',
-      descAr: 'تقييم شخصي ووضع خطة علاجية مناسبة لحالتك.',
-      image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118',
-      link: '/book-appointment'
-    },
-    {
-      titleEn: 'Hair Loss Treatment',
-      titleAr: 'علاج تساقط الشعر',
-      descEn: 'Comprehensive diagnosis and treatment plans for all types of hair loss conditions.',
-      descAr: 'تشخيص شامل وخطط علاجية لجميع أنواع تساقط الشعر.',
-      image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef',
-      link: '/services'
-    },
-    {
-      titleEn: 'Hair Transplant',
-      titleAr: 'زراعة الشعر',
-      descEn: 'Advanced FUE and FUT techniques for natural-looking, permanent hair restoration.',
-      descAr: 'تقنيات FUE و FUT المتقدمة لنتائج طبيعية ودائمة.',
-      image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d',
-      link: '/services'
-    }
-  ];
+  {
+    titleEn: 'Comprehensive hair assessment',
+    titleAr: 'الاستشارة',
+    descEn: 'Personalized assessment and treatment planning for your specific needs.',
+    descAr: 'تقييم شخصي ووضع خطة علاجية مناسبة لحالتك.',
+    image: 'https://cdn.sanity.io/images/0vv8moc6/dermatologytimes/1ca878c5ecdb8b7791a50524205b27d0f6ad1718-4286x2857.jpg',
+    link: '/book-appointment'
+  },
+  {
+    titleEn: 'Hair Loss Treatment',
+    titleAr: 'علاج تساقط الشعر',
+    descEn: 'Comprehensive diagnosis and treatment plans for all types of hair loss conditions.',
+    descAr: 'تشخيص شامل وخطط علاجية لجميع أنواع تساقط الشعر.',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSslc08kzVICRpcOcBmPr1JoOQr7D2WEHQ_sg&s',
+    link: '/services'
+  },
+  {
+    titleEn: 'Hair Transplant',
+    titleAr: 'زراعة الشعر',
+    descEn: 'Advanced FUE technique for natural-looking, permanent hair restoration.',
+    descAr: 'تقنية FUE المتقدمة لنتائج طبيعية ودائمة.',
+    image: 'https://media.istockphoto.com/id/1265650028/photo/hair-transplant.jpg?s=612x612&w=0&k=20&c=XVJRcIwrSx1x-RgbVPMw0lLcWwhgFnWslLllKN30cdE=',
+    link: '/services'
+  }
+];
 
   return (
     <>
-      <Helmet>
+      <Helmet>const ser
         <title>{isAr ? 'د. أحمد مجاهد - أخصائي زراعة الشعر' : 'Dr. Megahed Hair Clinic - Hair Loss Solutions & Hair Transplant Specialist'}</title>
         <meta name="description" content={isAr ? 'أخصائي زراعة الشعر وعلاج التساقط في مصر. أكثر من 10 سنوات من الخبرة وأكثر من 3000 عملية ناجحة.' : 'Leading hair transplant specialist offering advanced hair loss treatments and FUE hair transplant procedures in Egypt.'} />
       </Helmet>
@@ -73,13 +73,7 @@ function HomePage() {
         style={{ background: 'linear-gradient(135deg, #162d57 0%, #1e3a6e 50%, #253f7a 100%)' }}
         dir={isAr ? 'rtl' : 'ltr'}
       >
-        <div className="absolute inset-0 opacity-15">
-          <img
-            src="https://images.unsplash.com/photo-1629909613638-0e4a1fad8f81"
-            alt="Clinic"
-            className="w-full h-full object-cover"
-          />
-        </div>
+
         {/* Subtle decorative circles */}
         <div className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-5" style={{ background: 'white', transform: 'translate(30%, -30%)' }} />
         <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full opacity-5" style={{ background: 'white', transform: 'translate(-30%, 30%)' }} />
