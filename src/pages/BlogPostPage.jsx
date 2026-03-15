@@ -28,7 +28,7 @@ export default function BlogPostPage() {
       const selection = window.getSelection();
       if (!selection || selection.toString().length === 0) return;
 
-      const articleUrl = `https://megahedhairclinic.netlify.app/blogs/${post.id}`;
+      const articleUrl = `https://megahedhairclinic.com/blogs/${post.id}`;
       const suffix = isAr
         ? `\n\nاقرأ المزيد على: ${articleUrl}`
         : `\n\nSee more at: ${articleUrl}`;
