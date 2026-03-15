@@ -35,7 +35,7 @@ function HomePage() {
 
   const services = [
     {
-      titleEn: 'Consultation',
+      titleEn: 'Comprehensive hair assessment',
       titleAr: 'الاستشارة',
       descEn: 'Personalized assessment and treatment planning for your specific needs.',
       descAr: 'تقييم شخصي ووضع خطة علاجية مناسبة لحالتك.',
@@ -101,7 +101,7 @@ function HomePage() {
                     onMouseEnter={e => e.currentTarget.style.background = '#f0f5ff'}
                     onMouseLeave={e => e.currentTarget.style.background = 'white'}
                   >
-                    {isAr ? 'احجز استشارتك' : 'Book Online Consultation'}
+                   {isAr ? 'احجز استشارتك عن بعد (Online)' : 'Book Online Consultation'}
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>

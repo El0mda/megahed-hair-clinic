@@ -10,6 +10,8 @@ import AppointmentBookingPage from '@/pages/AppointmentBookingPage';
 import ContactPage from '@/pages/ContactPage';
 import AdminPage from '@/pages/AdminPage';
 import BlogsPage from '@/pages/BlogsPage';
+import ArticlesPage from '@/pages/ArticlesPage';
+import VideosPage from '@/pages/VideosPage';
 import BlogPostPage from '@/pages/BlogPostPage';
 import { Toaster } from '@/components/ui/toaster';
 import { LangSplash, useLang } from '@/components/Header';
@@ -57,7 +59,9 @@ function AppContent() {
     <Route path="book-appointment" element={<AppointmentBookingPage />} />
     <Route path="contact" element={<ContactPage />} />
     <Route path="blogs" element={<BlogsPage />} />
-    <Route path="blogs/:id" element={<BlogPostPage />} />
+<Route path="blogs/articles" element={<ArticlesPage />} />
+<Route path="blogs/videos" element={<VideosPage />} />
+<Route path="blogs/:id" element={<BlogPostPage />} />
   </Route>
   <Route path="/admin" element={<AdminPage />} />
 </Routes>
