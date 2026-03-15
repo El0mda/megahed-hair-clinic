@@ -8,6 +8,7 @@ import BeforeAfterPage from '@/pages/BeforeAfterPage';
 import AboutPage from '@/pages/AboutPage';
 import AppointmentBookingPage from '@/pages/AppointmentBookingPage';
 import ContactPage from '@/pages/ContactPage';
+import AdminPage from '@/pages/AdminPage';
 import { Toaster } from '@/components/ui/toaster';
 import { LangSplash, useLang } from '@/components/Header';
 import { motion } from 'framer-motion';
@@ -53,6 +54,7 @@ function AppContent() {
           <Route path="about" element={<AboutPage />} />
           <Route path="book-appointment" element={<AppointmentBookingPage />} />
           <Route path="contact" element={<ContactPage />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Route>
       </Routes>
       <Toaster />
