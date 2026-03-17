@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import ScrollToTop from '@/components/ScrollToTop';
 import MainLayout from '@/layouts/MainLayout';
 import HomePage from '@/pages/HomePage';
@@ -16,6 +16,57 @@ import BlogPostPage from '@/pages/BlogPostPage';
 import { Toaster } from '@/components/ui/toaster';
 import { LangSplash, useLang } from '@/components/Header';
 import { motion } from 'framer-motion';
+
+// ─── Sticky Action Bar ────────────────────────────────────────────────────────
+function StickyActionBar() {
+  const { isAr } = useLang();
+  const navigate = useNavigate();
+  const [headerHeight, setHeaderHeight] = useState(64);
+
+  // Measure the actual header height dynamically
+  useEffect(() => {
+    const measure = () => {
+      const header = document.querySelector('header');
+      if (header) setHeaderHeight(header.offsetHeight);
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
+
+  const handleClinicWhatsApp = () => {
+    const phoneNumber = "201288979999";
+    const message = encodeURIComponent(isAr
+      ? "مرحباً دكتور أحمد، أود حجز استشارة في العيادة."
+      : "Hello Dr. Ahmed, I would like to book a Clinic Consultation.");
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+  };
+
+  return (
+    <div
+      className="w-full bg-[#1e3a6e] border-b border-white/10 shadow-md fixed left-0 right-0 z-[49]"
+      style={{
+        top: headerHeight,
+        direction: isAr ? 'rtl' : 'ltr',
+      }}
+    >
+      <div className="flex">
+        <button
+          onClick={handleClinicWhatsApp}
+          className="flex-1 py-3 px-3 text-white font-bold text-[11px] sm:text-xs flex items-center justify-center hover:bg-white/10 transition-all border-r border-white/10 active:bg-white/20 uppercase tracking-widest whitespace-nowrap"
+        >
+          {isAr ? 'كشف بالعيادة' : 'In-Clinic Consultation'}
+        </button>
+        <button
+          onClick={() => navigate('/book-appointment')}
+          className="flex-1 py-3 px-3 text-white font-bold text-[11px] sm:text-xs flex items-center justify-center hover:bg-white/10 transition-all active:bg-white/20 uppercase tracking-widest whitespace-nowrap"
+        >
+          {isAr ? 'استشارة عن بعد' : 'Online Consultation'}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 // ─── WhatsApp Float ───────────────────────────────────────────────────────────
 function WhatsAppFloat() {
@@ -72,7 +123,12 @@ function AppContent() {
 
       <Toaster />
 
-      {showOverlays && <WhatsAppFloat />}
+      {showOverlays && (
+        <>
+          <StickyActionBar />
+          <WhatsAppFloat />
+        </>
+      )}
     </>
   );
 }
