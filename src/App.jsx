@@ -35,16 +35,15 @@ function StickyActionBar() {
       initial={{ y: -8, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.3 }}
-      className="w-full bg-[#1e3a6e] border-b border-white/10 shadow-lg z-[9000]"
+      className="w-full bg-[#1e3a6e] border-b border-white/10 shadow-lg sticky top-16 z-[9000]"
       style={{ direction: isAr ? 'rtl' : 'ltr' }}
     >
       <div className="flex max-w-3xl mx-auto">
         {/* In-Clinic */}
         <button
           onClick={handleClinicWhatsApp}
-          className="flex-1 py-3 px-3 text-white font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1.5 hover:bg-white/10 transition-all border-r border-white/10 active:bg-white/20"
+          className="flex-1 py-3 px-3 text-white font-bold text-[11px] sm:text-xs flex items-center justify-center hover:bg-white/10 transition-all border-r border-white/10 active:bg-white/20"
         >
-          <span className="text-base">🏥</span>
           <span className="uppercase tracking-wide whitespace-nowrap">
             {isAr ? 'كشف بالعيادة' : 'In-Clinic Consultation'}
           </span>
@@ -53,9 +52,8 @@ function StickyActionBar() {
         {/* Online */}
         <button
           onClick={() => navigate('/book-appointment')}
-          className="flex-1 py-3 px-3 text-white font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1.5 hover:bg-white/10 transition-all active:bg-white/20"
+          className="flex-1 py-3 px-3 text-white font-bold text-[11px] sm:text-xs flex items-center justify-center hover:bg-white/10 transition-all active:bg-white/20"
         >
-          <span className="text-base">💻</span>
           <span className="uppercase tracking-wide whitespace-nowrap">
             {isAr ? 'استشارة عن بعد' : 'Online Consultation'}
           </span>
