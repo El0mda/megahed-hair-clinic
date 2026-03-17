@@ -49,7 +49,7 @@ import { motion } from 'framer-motion';
       </div>
     </motion.div>
   );
-}
+
 
 // ─── WhatsApp Float ───────────────────────────────────────────────────────────
 function WhatsAppFloat() {
