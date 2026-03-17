@@ -19,7 +19,7 @@ function StickyActionBar() {
 
   return (
     <div
-      className="w-full bg-[#1e3a6e] border-b border-white/10 shadow-md sticky top-0 z-[50]"
+      className="w-full bg-[#1e3a6e] border-b border-white/10 shadow-md sticky top-[64px] z-[40]"
       style={{ direction: isAr ? 'rtl' : 'ltr' }}
     >
       <div className="flex max-w-3xl mx-auto">
