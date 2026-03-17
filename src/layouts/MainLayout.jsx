@@ -19,7 +19,7 @@ function StickyActionBar() {
 
   return (
     <div
-      className="w-full bg-[#1e3a6e] border-b border-white/10 shadow-md sticky top-[64px] z-[40]"
+      className="w-full bg-[#1e3a6e] border-b border-white/10 shadow-md fixed top-[64px] left-0 right-0 z-[40]"
       style={{ direction: isAr ? 'rtl' : 'ltr' }}
     >
       <div className="flex max-w-3xl mx-auto">
@@ -45,7 +45,7 @@ function MainLayout() {
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
       <StickyActionBar />
-      <main className="flex-grow">
+      <main className="flex-grow pt-[44px]">
         <Outlet />
       </main>
       <Footer />
