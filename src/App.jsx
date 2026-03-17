@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import ScrollToTop from '@/components/ScrollToTop';
 import MainLayout from '@/layouts/MainLayout';
 import HomePage from '@/pages/HomePage';
@@ -17,18 +17,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { LangSplash, useLang } from '@/components/Header';
 import { motion } from 'framer-motion';
 
-// ─── Sticky Action Bar ────────────────────────────────────────────────────────
-function StickyActionBar() {
-  const { isAr } = useLang();
-  const navigate = useNavigate();
-
-  const handleClinicWhatsApp = () => {
-    const phoneNumber = "201288979999";
-    const message = encodeURIComponent(isAr
-      ? "مرحباً دكتور أحمد، أود حجز استشارة في العيادة."
-      : "Hello Dr. Ahmed, I would like to book a Clinic Consultation.");
-    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
-  };
 
   return (
     <motion.div
@@ -100,8 +88,6 @@ function AppContent() {
       {!hasChosen && <LangSplash />}
       <ScrollToTop />
 
-      {/* Action bar sits between header and page content — part of the normal flow */}
-      {showOverlays && <StickyActionBar />}
 
       <Routes>
         <Route path="/" element={<MainLayout />}>
