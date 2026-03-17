@@ -3,9 +3,10 @@ import { Helmet } from 'react-helmet';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Users, Calendar, ArrowRight, Clock, Heart, X, Stethoscope, Video, Building2, Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
-import { motion, AnimatePresence, useAnimation } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { useLang } from '@/components/Header';
+import ImageComparison from '@/components/ImageComparison';
 
 // ─── REVIEWS CAROUSEL ────────────────────────────────────────────────────────
 function ReviewsSection({ isAr }) {
@@ -40,180 +41,166 @@ function ReviewsSection({ isAr }) {
   };
 
   if (count === 0) return null;
-
   const review = reviews[current];
 
   return (
-    <section
-      className="py-24 relative overflow-hidden"
-      dir={isAr ? 'rtl' : 'ltr'}
-      style={{ background: 'linear-gradient(160deg, #0f2347 0%, #1e3a6e 55%, #162d57 100%)' }}
-    >
-      {/* Decorative blobs */}
+    <section className="py-24 relative overflow-hidden" dir={isAr ? 'rtl' : 'ltr'}
+      style={{ background: 'linear-gradient(160deg, #0f2347 0%, #1e3a6e 55%, #162d57 100%)' }}>
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div style={{
-          position: 'absolute', width: 480, height: 480, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%)',
-          top: '-120px', right: '-100px'
-        }} />
-        <div style={{
-          position: 'absolute', width: 320, height: 320, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%)',
-          bottom: '-80px', left: '-60px'
-        }} />
-        {/* subtle grid lines */}
+        <div style={{ position: 'absolute', width: 480, height: 480, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%)', top: '-120px', right: '-100px' }} />
+        <div style={{ position: 'absolute', width: 320, height: 320, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%)', bottom: '-80px', left: '-60px' }} />
         <svg className="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
-              <path d="M 48 0 L 0 0 0 48" fill="none" stroke="white" strokeWidth="0.5" />
-            </pattern>
-          </defs>
+          <defs><pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M 48 0 L 0 0 0 48" fill="none" stroke="white" strokeWidth="0.5" /></pattern></defs>
           <rect width="100%" height="100%" fill="url(#grid)" />
         </svg>
       </div>
-
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* Section header */}
         <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full"
-            style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}>
+          <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}>
             <Star size={13} style={{ fill: '#f59e0b', stroke: 'none' }} />
-            <span className="text-xs font-bold tracking-widest uppercase text-white/60">
-              {isAr ? 'آراء مرضانا' : "Patient Reviews"}
-            </span>
+            <span className="text-xs font-bold tracking-widest uppercase text-white/60">{isAr ? 'آراء مرضانا' : 'Patient Reviews'}</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-black text-white leading-tight">
-            {isAr ? 'ماذا يقول مرضانا' : 'What Our Patients Say'}
-          </h2>
+          <h2 className="text-3xl sm:text-4xl font-black text-white leading-tight">{isAr ? 'ماذا يقول مرضانا' : 'What Our Patients Say'}</h2>
         </div>
-
-        {/* Card */}
         <div className="relative">
           <AnimatePresence mode="wait">
-            <motion.div
-              key={review.id}
-              initial={{ opacity: 0, y: 28 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              className="rounded-3xl p-8 sm:p-12"
-              style={{
-                background: 'rgba(255,255,255,0.06)',
-                backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                boxShadow: '0 32px 80px rgba(0,0,0,0.35)'
-              }}
-            >
-              {/* Quote icon */}
+            <motion.div key={review.id} initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }} className="rounded-3xl p-8 sm:p-12"
+              style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 32px 80px rgba(0,0,0,0.35)' }}>
               <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
-                <Quote
-                  size={44}
-                  style={{
-                    color: 'rgba(255,255,255,0.12)',
-                    transform: isAr ? 'scaleX(-1)' : 'none',
-                    flexShrink: 0
-                  }}
-                />
-                {/* Stars */}
+                <Quote size={44} style={{ color: 'rgba(255,255,255,0.12)', transform: isAr ? 'scaleX(-1)' : 'none', flexShrink: 0 }} />
                 <div className="flex gap-1">
-                  {[1, 2, 3, 4, 5].map(s => (
-                    <Star
-                      key={s}
-                      size={18}
-                      style={{
-                        fill: s <= review.stars ? '#f59e0b' : 'rgba(255,255,255,0.15)',
-                        stroke: 'none',
-                        transition: 'fill 0.3s'
-                      }}
-                    />
-                  ))}
+                  {[1,2,3,4,5].map(s => <Star key={s} size={18} style={{ fill: s <= review.stars ? '#f59e0b' : 'rgba(255,255,255,0.15)', stroke: 'none', transition: 'fill 0.3s' }} />)}
                 </div>
               </div>
-
-              {/* Review text */}
-              <p className="text-white/85 text-lg sm:text-xl leading-relaxed mb-8 font-light"
-                style={{ fontStyle: 'italic', letterSpacing: '0.01em' }}>
-                "{review.review_text}"
-              </p>
-
-              {/* Patient name row */}
+              <p className="text-white/85 text-lg sm:text-xl leading-relaxed mb-8 font-light" style={{ fontStyle: 'italic', letterSpacing: '0.01em' }}>"{review.review_text}"</p>
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-black text-base flex-shrink-0"
-                  style={{ background: 'rgba(255,255,255,0.12)', border: '2px solid rgba(255,255,255,0.2)' }}>
+                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-black text-base flex-shrink-0" style={{ background: 'rgba(255,255,255,0.12)', border: '2px solid rgba(255,255,255,0.2)' }}>
                   {review.patient_name?.charAt(0)?.toUpperCase()}
                 </div>
                 <div>
                   <p className="text-white font-bold text-sm">{review.patient_name}</p>
-                  <p className="text-white/40 text-xs mt-0.5">
-                    {isAr ? 'مريض دكتور مجاهد' : 'Dr. Megahed Patient'}
-                  </p>
+                  <p className="text-white/40 text-xs mt-0.5">{isAr ? 'مريض دكتور مجاهد' : 'Dr. Megahed Patient'}</p>
                 </div>
-
               </div>
-
-              {/* Full Google Review screenshot */}
               {review.image_url && (
-                <div className="rounded-2xl overflow-hidden"
-                  style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
-                  <img
-                    src={review.image_url}
-                    alt="Google Review"
-                    className="w-full h-auto object-contain"
-                    style={{ display: 'block', maxHeight: '420px', objectFit: 'contain', background: 'rgba(255,255,255,0.03)' }}
-                  />
+                <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <img src={review.image_url} alt="Review" className="w-full h-auto object-contain" style={{ display: 'block', maxHeight: '420px', objectFit: 'contain', background: 'rgba(255,255,255,0.03)' }} />
                 </div>
               )}
             </motion.div>
           </AnimatePresence>
         </div>
-
-        {/* Navigation */}
         {count > 1 && (
           <div className="flex items-center justify-center gap-6 mt-10">
-            {/* Prev */}
-            <button
-              onClick={() => goTo(current - 1)}
-              className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110"
-              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}
-            >
+            <button onClick={() => goTo(current - 1)} className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}>
               {isAr ? <ChevronRight size={18} color="white" /> : <ChevronLeft size={18} color="white" />}
             </button>
-
-            {/* Dots */}
             <div className="flex gap-2">
               {reviews.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => goTo(i)}
-                  className="transition-all"
-                  style={{
-                    width: i === current ? 28 : 8,
-                    height: 8,
-                    borderRadius: 99,
-                    background: i === current ? '#f59e0b' : 'rgba(255,255,255,0.2)',
-                  }}
-                />
+                <button key={i} onClick={() => goTo(i)} className="transition-all" style={{ width: i === current ? 28 : 8, height: 8, borderRadius: 99, background: i === current ? '#f59e0b' : 'rgba(255,255,255,0.2)' }} />
               ))}
             </div>
-
-            {/* Next */}
-            <button
-              onClick={() => goTo(current + 1)}
-              className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110"
-              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}
-            >
+            <button onClick={() => goTo(current + 1)} className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}>
               {isAr ? <ChevronLeft size={18} color="white" /> : <ChevronRight size={18} color="white" />}
             </button>
           </div>
         )}
+        {count > 1 && <p className="text-center text-white/25 text-xs mt-5 font-bold tracking-widest">{current + 1} / {count}</p>}
+      </div>
+    </section>
+  );
+}
 
-        {/* Counter */}
-        {count > 1 && (
-          <p className="text-center text-white/25 text-xs mt-5 font-bold tracking-widest">
-            {current + 1} / {count}
-          </p>
-        )}
+// ─── BEFORE & AFTER PREVIEW ───────────────────────────────────────────────────
+function BeforeAfterPreview({ isAr }) {
+  const [cases, setCases] = useState([]);
+
+  useEffect(() => {
+    supabase
+      .from('before_after_cases')
+      .select('*, case_images(*)')
+      .order('created_at', { ascending: false })
+      .limit(4)
+      .then(({ data }) => {
+        if (data && data.length > 0) setCases(data);
+      });
+  }, []);
+
+  if (cases.length === 0) return null;
+
+  // Pick first image pair from each case
+  const previews = cases
+    .filter(c => c.case_images && c.case_images.length > 0)
+    .slice(0, 4);
+
+  if (previews.length === 0) return null;
+
+  return (
+    <section className="py-16 bg-[#f0f4fa]" dir={isAr ? 'rtl' : 'ltr'}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {/* Header */}
+        <div className="flex items-end justify-between mb-10 flex-wrap gap-4">
+          <div>
+            <p className="text-xs font-black uppercase tracking-widest text-[#1e3a6e]/50 mb-2">
+              {isAr ? 'نتائج حقيقية' : 'Real Results'}
+            </p>
+            <h2 className="text-3xl font-black text-[#1e3a6e] leading-tight">
+              {isAr ? 'قبل وبعد' : 'Before & After'}
+            </h2>
+          </div>
+          <Link to="/before-after">
+            <button className="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all hover:-translate-y-0.5 active:scale-95"
+              style={{ background: '#1e3a6e', color: 'white' }}>
+              {isAr ? 'عرض جميع النتائج' : 'View All Results'}
+              {isAr ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+            </button>
+          </Link>
+        </div>
+
+        {/* Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {previews.map((item, idx) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.08 }}
+              className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100 flex flex-col"
+            >
+              {/* Comparison slider */}
+              <div className="w-full">
+                <ImageComparison
+                  before={item.case_images[0]?.before_image_url}
+                  after={item.case_images[0]?.after_image_url}
+                  isAr={isAr}
+                />
+              </div>
+
+              {/* Name + category */}
+              <div className="p-3 flex items-center justify-between gap-1">
+                <p className="font-black text-[#1e3a6e] text-xs truncate">
+                  {isAr ? item.patient_name_ar : item.patient_name_en}
+                </p>
+                <span className="text-[7px] bg-[#e8eef8] text-[#1e3a6e] px-1.5 py-0.5 rounded-full font-black uppercase tracking-widest flex-shrink-0">
+                  {item.category}
+                </span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Bottom CTA */}
+        <div className="text-center mt-10">
+          <Link to="/before-after">
+            <button className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl font-bold text-sm border-2 transition-all hover:-translate-y-0.5"
+              style={{ borderColor: '#1e3a6e', color: '#1e3a6e', background: 'white' }}>
+              {isAr ? 'مشاهدة كل قصص النجاح' : 'See All Success Stories'}
+              {isAr ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+            </button>
+          </Link>
+        </div>
       </div>
     </section>
   );
@@ -235,55 +222,15 @@ function HomePage() {
   };
 
   const credentials = [
-    {
-      icon: Users,
-      titleEn: '10,000+ Satisfied Patients and Clients',
-      titleAr: '+10,000 مريض وعميل راضٍ',
-      descEn: 'Trusted by thousands for expert hair care and restoration',
-      descAr: 'ثقة الآلاف في رعاية الشعر وعلاجه'
-    },
-    {
-      icon: Heart,
-      titleEn: '3,000+ Successful Hair Transplant Surgeries',
-      titleAr: '+3,000 عملية زراعة شعر ناجحة',
-      descEn: 'Advanced hair transplant procedures with natural results',
-      descAr: 'عمليات زراعة شعر متقدمة بنتائج طبيعية'
-    },
-    {
-      icon: Clock,
-      titleEn: '10+ Years Experience',
-      titleAr: '+10 سنوات خبرة',
-      descEn: 'Experience in hair loss management and restoration',
-      descAr: 'في إدارة تساقط الشعر وزراعته'
-    }
+    { icon: Users, titleEn: '10,000+ Satisfied Patients and Clients', titleAr: '+10,000 مريض وعميل راضٍ', descEn: 'Trusted by thousands for expert hair care and restoration', descAr: 'ثقة الآلاف في رعاية الشعر وعلاجه' },
+    { icon: Heart, titleEn: '3,000+ Successful Hair Transplant Surgeries', titleAr: '+3,000 عملية زراعة شعر ناجحة', descEn: 'Advanced hair transplant procedures with natural results', descAr: 'عمليات زراعة شعر متقدمة بنتائج طبيعية' },
+    { icon: Clock, titleEn: '10+ Years Experience', titleAr: '+10 سنوات خبرة', descEn: 'Experience in hair loss management and restoration', descAr: 'في إدارة تساقط الشعر وزراعته' },
   ];
 
   const services = [
-    {
-      titleEn: 'Comprehensive hair assessment',
-      titleAr: 'الاستشارة',
-      descEn: 'Personalized assessment and treatment planning for your specific needs.',
-      descAr: 'تقييم شخصي ووضع خطة علاجية مناسبة لحالتك.',
-      image: 'https://cdn.sanity.io/images/0vv8moc6/dermatologytimes/1ca878c5ecdb8b7791a50524205b27d0f6ad1718-4286x2857.jpg',
-      link: '#',
-      isModalTrigger: true
-    },
-    {
-      titleEn: 'Hair Loss Treatment',
-      titleAr: 'علاج تساقط الشعر',
-      descEn: 'Comprehensive diagnosis and treatment plans for all types of hair loss conditions.',
-      descAr: 'تشخيص شامل وخطط علاجية لجميع أنواع تساقط الشعر.',
-      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSslc08kzVICRpcOcBmPr1JoOQr7D2WEHQ_sg&s',
-      link: '/services'
-    },
-    {
-      titleEn: 'Hair Transplant',
-      titleAr: 'زراعة الشعر',
-      descEn: 'Advanced FUE technique for natural-looking, permanent hair restoration.',
-      descAr: 'تقنية FUE المتقدمة لنتائج طبيعية ودائمة.',
-      image: 'https://media.istockphoto.com/id/1265650028/photo/hair-transplant.jpg?s=612x612&w=0&k=20&c=XVJRcIwrSx1x-RgbVPMw0lLcWwhgFnWslLllKN30cdE=',
-      link: '/services'
-    }
+    { titleEn: 'Comprehensive hair assessment', titleAr: 'الاستشارة', image: 'https://cdn.sanity.io/images/0vv8moc6/dermatologytimes/1ca878c5ecdb8b7791a50524205b27d0f6ad1718-4286x2857.jpg', link: '#', isModalTrigger: true },
+    { titleEn: 'Hair Loss Treatment', titleAr: 'علاج تساقط الشعر', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSslc08kzVICRpcOcBmPr1JoOQr7D2WEHQ_sg&s', link: '/services' },
+    { titleEn: 'Hair Transplant', titleAr: 'زراعة الشعر', image: 'https://media.istockphoto.com/id/1265650028/photo/hair-transplant.jpg?s=612x612&w=0&k=20&c=XVJRcIwrSx1x-RgbVPMw0lLcWwhgFnWslLllKN30cdE=', link: '/services' },
   ];
 
   return (
@@ -365,7 +312,10 @@ function HomePage() {
         </div>
       </section>
 
-      {/* ── REVIEWS SECTION ── */}
+      {/* ── BEFORE & AFTER PREVIEW ── */}
+      <BeforeAfterPreview isAr={isAr} />
+
+      {/* ── REVIEWS ── */}
       <ReviewsSection isAr={isAr} />
 
       {/* CTA */}

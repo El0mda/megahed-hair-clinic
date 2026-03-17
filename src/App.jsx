@@ -50,7 +50,7 @@ function StickyActionBar() {
         direction: isAr ? 'rtl' : 'ltr',
       }}
     >
-      <div className="flex">
+      <div className="flex bg-[#F59E0B]">
         <button
           onClick={handleClinicWhatsApp}
           className="flex-1 py-3 px-3 text-white font-bold text-[11px] sm:text-xs flex items-center justify-center hover:bg-white/10 transition-all border-r border-white/10 active:bg-white/20 uppercase tracking-widest whitespace-nowrap"
