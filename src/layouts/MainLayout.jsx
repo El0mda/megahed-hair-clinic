@@ -18,7 +18,11 @@ function StickyActionBar() {
 
   return (
     <div
-      className="w-full bg-[#1e3a6e] border-b border-white/10 shadow-md sticky top-[64px] left-0 right-0 z-[40]"
+      /* fixed: keeps it on screen always
+         top-[64px]: sits it exactly below a standard 64px header
+         z-[40]: stays above page content but below header dropdowns
+      */
+      className="w-full bg-[#1e3a6e] border-b border-white/10 shadow-lg fixed top-[64px] left-0 right-0 z-[40]"
       style={{ direction: isAr ? 'rtl' : 'ltr' }}
     >
       <div className="flex max-w-3xl mx-auto">
@@ -42,15 +46,23 @@ function StickyActionBar() {
 function MainLayout() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      {/* 1. Header (Must be fixed top-0 in its own component) */}
       <Header />
+      
+      {/* 2. Action Bar (Fixed at top-64px) */}
       <StickyActionBar />
-      <main className="flex-grow">
+
+      {/* 3. Main Content 
+          We need pt-[110px] (64px header + ~46px action bar) 
+          so the top of your page isn't hidden behind the bars.
+      */}
+      <main className="flex-grow pt-[110px]">
         <Outlet />
       </main>
+      
       <Footer />
     </div>
   );
 }
 
-// THIS IS THE MISSING LINE THAT CAUSED THE BUILD ERROR:
 export default MainLayout;
