@@ -8,11 +8,16 @@ function StickyActionBar() {
   const { isAr } = useLang();
   const navigate = useNavigate();
 
-  // ... handleClinicWhatsApp function ...
+  const handleClinicWhatsApp = () => {
+    const phoneNumber = "201288979999";
+    const message = encodeURIComponent(isAr
+      ? "مرحباً دكتور أحمد، أود حجز استشارة في العيادة."
+      : "Hello Dr. Ahmed, I would like to book a Clinic Consultation.");
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+  };
 
   return (
     <div
-      /* Changed 'fixed' to 'sticky' and removed top-[64px] */
       className="w-full bg-[#1e3a6e] border-b border-white/10 shadow-md sticky top-[64px] left-0 right-0 z-[40]"
       style={{ direction: isAr ? 'rtl' : 'ltr' }}
     >
@@ -37,10 +42,8 @@ function StickyActionBar() {
 function MainLayout() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      {/* Ensure your Header component has a higher z-index (e.g., z-[50]) */}
       <Header />
       <StickyActionBar />
-      {/* Removed the large pt-[44px] since sticky positioning handles the flow */}
       <main className="flex-grow">
         <Outlet />
       </main>
@@ -48,3 +51,6 @@ function MainLayout() {
     </div>
   );
 }
+
+// THIS IS THE MISSING LINE THAT CAUSED THE BUILD ERROR:
+export default MainLayout;
