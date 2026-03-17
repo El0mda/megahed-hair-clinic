@@ -1,15 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
-import { Calendar } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Link, useNavigate } from 'react-router-dom';
+import { Calendar, Stethoscope, Video, Building2, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useLang } from '@/components/Header';
+import { Button } from '@/components/ui/button';
 
 const DR_PHOTO = "https://i.ibb.co/3mFpVHt0/Screenshot-from-2026-03-05-17-52-16.png";
 
 function AboutPage() {
   const { isAr } = useLang();
+  const navigate = useNavigate();
   const dir = isAr ? 'rtl' : 'ltr';
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleClinicConsultation = () => {
+    const phoneNumber = "201288979999";
+    const message = encodeURIComponent(isAr 
+      ? "مرحباً دكتور أحمد، أود حجز استشارة في العيادة." 
+      : "Hello Dr. Ahmed, I would like to book a Clinic Consultation.");
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+    setIsModalOpen(false);
+  };
 
   const biographyEn = [
     "Early in my dermatology career, it became clear to me that hair loss and scalp disorders were often under-addressed, despite their profound medical and psychological impact. The lack of precise diagnosis and structured management pushed me to focus my practice exclusively on hair loss, scalp disorders, and hair transplantation, with the goal of offering more accurate, thoughtful, and effective care.",
@@ -41,12 +53,8 @@ function AboutPage() {
         <title>{isAr ? 'عن الدكتور أحمد مجاهد' : 'About Dr. Ahmed Megahed'}</title>
       </Helmet>
 
-      {/* Hero — exact header navy */}
-      <section
-        className="text-white py-16"
-        style={{ background: 'linear-gradient(135deg, #162d57 0%, #1e3a6e 50%, #253f7a 100%)' }}
-        dir={dir}
-      >
+      {/* Hero */}
+      <section className="text-white py-16" style={{ background: 'linear-gradient(135deg, #162d57 0%, #1e3a6e 50%, #253f7a 100%)' }} dir={dir}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <h1 className="text-4xl lg:text-5xl font-bold mb-4 text-white">
@@ -60,92 +68,68 @@ function AboutPage() {
       </section>
 
       {/* Photo + Biography */}
-      <section className="py-16" style={{ background: 'white' }} dir={dir}>
+      <section className="py-16 bg-white" dir={dir}>
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-
-          {/* Photo */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }} viewport={{ once: true }}
-            className="mb-12"
-          >
-            <img
-              src={DR_PHOTO}
-              alt="Dr. Ahmed Megahed"
-              className="w-full rounded-2xl shadow-2xl"
-              style={{ aspectRatio: '18/20', objectFit: 'cover', objectPosition: '50% 10%' }}
-            />
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }} className="mb-12">
+            <img src={DR_PHOTO} alt="Dr. Ahmed Megahed" className="w-full rounded-2xl shadow-2xl" style={{ aspectRatio: '18/20', objectFit: 'cover', objectPosition: '50% 10%' }} />
           </motion.div>
 
-          {/* Biography text */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }} viewport={{ once: true }}
-          >
-            {biography.map((para, i) => {
-              const isLast = i === biography.length - 1;
-              return (
-                <div
-                  key={i}
-                  style={{
-                    borderLeft: isAr ? 'none' : '3px solid #7a96c2',
-                    borderRight: isAr ? '3px solid #7a96c2' : 'none',
-                    borderTop: 'none',
-                    borderBottom: 'none',
-                    borderStyle: 'solid',
-                    borderColor: '#7a96c2',
-                    paddingLeft: isAr ? '0' : '18px',
-                    paddingRight: isAr ? '18px' : '0',
-                    padding: isAr ? '14px 18px 14px 14px' : '14px 14px 14px 18px',
-                    marginBottom: isLast ? '0' : '20px',
-                    background: i % 2 === 0 ? '#f7f9fd' : 'white',
-                    borderRadius: '4px',
-                  }}
-                >
-                  <p style={{
-                    color: isLast ? '#1e3a6e' : '#374151',
-                    lineHeight: '1.9',
-                    fontSize: '0.97rem',
-                    fontWeight: isLast ? '500' : '400',
-                    fontStyle: isLast ? 'italic' : 'normal',
-                    margin: 0,
-                  }}>
-                    {para}
-                  </p>
-                </div>
-              );
-            })}
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} viewport={{ once: true }}>
+            {biography.map((para, i) => (
+              <div key={i} className={`p-5 mb-5 rounded-lg ${i % 2 === 0 ? 'bg-[#f7f9fd]' : 'bg-white'}`} style={{ borderLeft: !isAr ? '3px solid #7a96c2' : 'none', borderRight: isAr ? '3px solid #7a96c2' : 'none' }}>
+                <p className="leading-relaxed text-[0.97rem]" style={{ color: i === biography.length - 1 ? '#1e3a6e' : '#374151', fontWeight: i === biography.length - 1 ? '500' : '400' }}>
+                  {para}
+                </p>
+              </div>
+            ))}
           </motion.div>
-
         </div>
       </section>
 
-      {/* CTA — exact header navy */}
+      {/* CTA Section — TRIGGERS MODAL */}
       <section className="py-16" style={{ background: '#1e3a6e' }} dir={dir}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-7xl mx-auto px-4 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
-            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-              {isAr ? 'احجز استشارتك الآن' : 'Book Your Consultation'}
-            </h2>
+            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">{isAr ? 'احجز استشارتك الآن' : 'Book Your Consultation'}</h2>
             <p className="text-xl mb-8 max-w-2xl mx-auto" style={{ color: '#a8c4e8' }}>
-              {isAr
-                ? 'تواصل مع د.أحمد مجاهد لمناقشة أهدافك العلاجية'
-                : 'Schedule a personal consultation with Dr. Ahmed Megahed to discuss your hair restoration goals'}
+              {isAr ? 'تواصل مع د.أحمد مجاهد لمناقشة أهدافك العلاجية' : 'Schedule a personal consultation with Dr. Ahmed Megahed.'}
             </p>
-            <Link to="/book-appointment">
-              <button
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-lg shadow-xl transition-colors"
-                style={{ background: 'white', color: '#1e3a6e' }}
-                onMouseEnter={e => e.currentTarget.style.background = '#f0f4fa'}
-                onMouseLeave={e => e.currentTarget.style.background = 'white'}
-              >
-                <Calendar className="w-5 h-5" />
-                {isAr ? 'احجز موعداً' : 'Book Your Consultation'}
-              </button>
-            </Link>
+            <Button size="lg" onClick={() => setIsModalOpen(true)} className="font-semibold shadow-xl" style={{ background: 'white', color: '#1e3a6e' }}>
+              <Calendar className="w-5 h-5 mr-2" />
+              {isAr ? 'احجز موعداً' : 'Book Your Consultation'}
+            </Button>
           </motion.div>
         </div>
       </section>
+
+      {/* --- CONSULTATION SELECTION MODAL --- */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 z-[101]" dir={dir}>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-2xl font-bold text-[#1e3a6e]">{isAr ? 'نوع الاستشارة' : 'Consultation Type'}</h3>
+                <button onClick={() => setIsModalOpen(false)}><X className="w-6 h-6 text-gray-400" /></button>
+              </div>
+              <div className="space-y-3">
+                <button onClick={() => {navigate('/book-appointment'); setIsModalOpen(false);}} className="w-full flex items-center p-4 border-2 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all text-left">
+                  <Stethoscope className={`${isAr ? 'ml-4' : 'mr-4'} w-8 h-8 text-blue-600`} />
+                  <div className="font-bold">{isAr ? 'استشارة زراعة الشعر' : 'Hair Transplant Consultation'}</div>
+                </button>
+                <button onClick={() => {navigate('/book-appointment'); setIsModalOpen(false);}} className="w-full flex items-center p-4 border-2 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all text-left">
+                  <Video className={`${isAr ? 'ml-4' : 'mr-4'} w-8 h-8 text-blue-600`} />
+                  <div className="font-bold">{isAr ? 'استشارة أونلاين' : 'Online Consultation'}</div>
+                </button>
+                <button onClick={handleClinicConsultation} className="w-full flex items-center p-4 border-2 border-gray-100 rounded-xl hover:border-green-500 hover:bg-green-50 transition-all text-left">
+                  <Building2 className={`${isAr ? 'ml-4' : 'mr-4'} w-8 h-8 text-green-600`} />
+                  <div className="font-bold text-green-700">{isAr ? 'تواصل معنا' : 'Contact Us'}</div>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

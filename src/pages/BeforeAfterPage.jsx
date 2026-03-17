@@ -1,302 +1,237 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { X, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ImageIcon, LayoutGrid } from 'lucide-react'; // Added LayoutGrid
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLang } from '@/components/Header';
-import { Link } from 'react-router-dom';
+import { supabase } from '@/lib/supabase';
+import ImageComparison from '@/components/ImageComparison';
 
-function BeforeAfterPage() {
-  const { isAr } = useLang();
-  const dir = isAr ? 'rtl' : 'ltr';
+// ─── INTERNAL CAROUSEL COMPONENT ───
+const ResultCarousel = ({ images, isAr }) => {
+  const [index, setIndex] = useState(0);
 
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [lightboxImage, setLightboxImage] = useState(null);
-  const [lightboxIndex, setLightboxIndex] = useState(0);
+  // Safety check to prevent "Cannot read properties of null"
+  if (!images || images.length === 0) {
+    return (
+      <div className="aspect-[4/3] bg-gray-100 flex flex-col items-center justify-center text-gray-400 gap-2">
+        <ImageIcon size={40} strokeWidth={1} />
+        <p className="text-xs uppercase tracking-widest font-bold">No Images Available</p>
+      </div>
+    );
+  }
 
-  const categories = [
-    { id: 'all', labelEn: 'All Results', labelAr: 'جميع النتائج' },
-    { id: 'transplant', labelEn: 'Hair Transplant', labelAr: 'زراعة الشعر' },
-    { id: 'treatment', labelEn: 'Hair Loss Treatment', labelAr: 'علاج تساقط الشعر' },
-  ];
-
-  const gallery = [
-    {
-      id: 1,
-      before: 'https://images.unsplash.com/photo-1701885183616-cf00e2db1a3b',
-      after: 'https://images.unsplash.com/photo-1701885183616-cf00e2db1a3b',
-      category: 'transplant',
-      titleEn: 'FUE Hair Transplant - 3500 Grafts',
-      titleAr: 'زراعة شعر FUE - 3500 طعم',
-      descEn: '12 months post-procedure result showing natural hairline restoration',
-      descAr: 'نتيجة بعد 12 شهرًا تُظهر استعادة خط الشعر الطبيعي',
-    },
-    {
-      id: 2,
-      before: 'https://images.unsplash.com/photo-1701885881102-de58a9e6e0a6',
-      after: 'https://images.unsplash.com/photo-1701885881102-de58a9e6e0a6',
-      category: 'transplant',
-      titleEn: 'FUT Hair Transplant - 4000 Grafts',
-      titleAr: 'زراعة شعر FUT - 4000 طعم',
-      descEn: '15 months post-procedure with excellent density improvement',
-      descAr: 'نتيجة بعد 15 شهرًا مع تحسن ملحوظ في الكثافة',
-    },
-    {
-      id: 3,
-      before: 'https://images.unsplash.com/photo-1645235997928-0d70f3233154',
-      after: 'https://images.unsplash.com/photo-1645235997928-0d70f3233154',
-      category: 'treatment',
-      titleEn: 'PRP Therapy Treatment',
-      titleAr: 'علاج بالبلازما (PRP)',
-      descEn: '6 months of PRP treatment showing increased hair thickness',
-      descAr: '6 أشهر من علاج PRP مع زيادة ملحوظة في سماكة الشعر',
-    },
-    {
-      id: 4,
-      before: 'https://images.unsplash.com/photo-1520345376710-1662a32db252',
-      after: 'https://images.unsplash.com/photo-1520345376710-1662a32db252',
-      category: 'transplant',
-      titleEn: 'Crown Restoration - 2800 Grafts',
-      titleAr: 'استعادة تاج الرأس - 2800 طعم',
-      descEn: '10 months post-FUE procedure with natural crown coverage',
-      descAr: 'نتيجة بعد 10 أشهر من FUE مع تغطية طبيعية للقمة',
-    },
-  ];
-
-  const filteredGallery = selectedCategory === 'all'
-    ? gallery
-    : gallery.filter(item => item.category === selectedCategory);
-
-  const openLightbox = (item, index) => {
-    setLightboxImage(item);
-    setLightboxIndex(index);
-  };
-
-  const closeLightbox = () => setLightboxImage(null);
-
-  const navigateLightbox = (direction) => {
-    const newIndex = direction === 'next'
-      ? (lightboxIndex + 1) % filteredGallery.length
-      : (lightboxIndex - 1 + filteredGallery.length) % filteredGallery.length;
-    setLightboxIndex(newIndex);
-    setLightboxImage(filteredGallery[newIndex]);
-  };
+  const next = () => setIndex((prev) => (prev + 1) % images.length);
+  const prev = () => setIndex((prev) => (prev - 1 + images.length) % images.length);
 
   return (
-    <>
-      <Helmet>
-        <title>{isAr ? 'قبل وبعد — د. أحمد مجاهد' : 'Before & After Gallery - Dr. Ahmed Megahed'}</title>
-        <meta name="description" content="View real patient results from Dr. Ahmed Megahed's hair transplant and hair loss treatment procedures." />
-      </Helmet>
-
-      {/* Hero — exact header navy */}
-      <section
-        className="text-white py-16"
-        style={{ background: 'linear-gradient(135deg, #162d57 0%, #1e3a6e 50%, #253f7a 100%)' }}
-        dir={dir}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <h1 className="text-4xl lg:text-5xl font-bold mb-4 text-white">
-              {isAr ? 'معرض قبل وبعد' : 'Before & After Gallery'}
-            </h1>
-            <p className="text-xl max-w-3xl mx-auto" style={{ color: '#a8c4e8' }}>
-              {isAr
-                ? 'نتائج حقيقية لمرضى حقيقيين — شاهد التحول الذي أحدثناه'
-                : 'Real results from real patients — see the transformation achieved through expert hair restoration'}
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Filter Bar */}
-      <section
-        className="py-5 sticky top-16 z-40"
-        style={{ background: 'white', borderBottom: '1px solid #d0ddf0' }}
-        dir={dir}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center gap-3 flex-wrap">
-            <Filter className="w-4 h-4" style={{ color: '#7a96c2' }} />
-            <span className="text-sm font-medium" style={{ color: '#5a7099' }}>
-              {isAr ? 'تصفية:' : 'Filter by:'}
-            </span>
-            {categories.map((cat) => {
-              const active = selectedCategory === cat.id;
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className="px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all duration-200"
-                  style={{
-                    borderColor: active ? '#1e3a6e' : '#d0ddf0',
-                    background: active ? '#1e3a6e' : 'white',
-                    color: active ? 'white' : '#5a7099',
-                  }}
-                  onMouseEnter={e => { if (!active) { e.currentTarget.style.borderColor = '#7a96c2'; e.currentTarget.style.color = '#1e3a6e'; } }}
-                  onMouseLeave={e => { if (!active) { e.currentTarget.style.borderColor = '#d0ddf0'; e.currentTarget.style.color = '#5a7099'; } }}
-                >
-                  {isAr ? cat.labelAr : cat.labelEn}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Gallery Grid */}
-      <section className="py-16" style={{ background: '#f0f4fa' }} dir={dir}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <AnimatePresence mode="wait">
-              {filteredGallery.map((item, index) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow cursor-pointer"
-                  style={{ background: 'white', border: '1px solid #d0ddf0' }}
-                  onClick={() => openLightbox(item, index)}
-                >
-                  <div className="grid grid-cols-2">
-                    <div className="relative">
-                      <img src={item.before} alt={`Before ${item.titleEn}`} className="w-full h-64 object-cover" />
-                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                        <span className="text-white font-bold text-sm px-3 py-1.5 rounded-lg" style={{ background: '#c0392b' }}>
-                          {isAr ? 'قبل' : 'BEFORE'}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="relative">
-                      <img src={item.after} alt={`After ${item.titleEn}`} className="w-full h-64 object-cover" />
-                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                        <span className="text-white font-bold text-sm px-3 py-1.5 rounded-lg" style={{ background: '#1e3a6e' }}>
-                          {isAr ? 'بعد' : 'AFTER'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-lg font-bold mb-2" style={{ color: '#1e3a6e' }}>
-                      {isAr ? item.titleAr : item.titleEn}
-                    </h3>
-                    <p className="text-sm" style={{ color: '#5a7099' }}>
-                      {isAr ? item.descAr : item.descEn}
-                    </p>
-                    <div className="mt-4">
-                      <span
-                        className="inline-block text-xs font-semibold px-3 py-1 rounded-full"
-                        style={{ background: '#e8eef8', color: '#1e3a6e' }}
-                      >
-                        {isAr
-                          ? categories.find(c => c.id === item.category)?.labelAr
-                          : categories.find(c => c.id === item.category)?.labelEn}
-                      </span>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-
-          {filteredGallery.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-lg" style={{ color: '#7a96c2' }}>
-                {isAr ? 'لا توجد نتائج لهذه الفئة.' : 'No results found for this category.'}
-              </p>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Lightbox Modal */}
-      <AnimatePresence>
-        {lightboxImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
-            onClick={closeLightbox}
+    <div className="relative group overflow-hidden">
+      {/* Label for current angle */}
+      <AnimatePresence mode="wait">
+        {(images[index]?.label_en || images[index]?.label_ar) && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            key={`label-${index}`}
+            className="absolute top-4 left-1/2 -translate-x-1/2 z-20 bg-black/60 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest whitespace-nowrap shadow-lg"
           >
-            <button onClick={closeLightbox} className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-50">
-              <X className="w-8 h-8" />
-            </button>
-            <button
-              onClick={e => { e.stopPropagation(); navigateLightbox('prev'); }}
-              className="absolute left-4 text-white hover:text-gray-300 transition-colors z-50"
-            >
-              <ChevronLeft className="w-12 h-12" />
-            </button>
-            <button
-              onClick={e => { e.stopPropagation(); navigateLightbox('next'); }}
-              className="absolute right-4 text-white hover:text-gray-300 transition-colors z-50"
-            >
-              <ChevronRight className="w-12 h-12" />
-            </button>
-
-            <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              className="max-w-6xl w-full"
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <div className="text-white text-center py-2 mb-2 rounded-lg font-bold" style={{ background: '#c0392b' }}>
-                    {isAr ? 'قبل' : 'BEFORE'}
-                  </div>
-                  <img src={lightboxImage.before} alt="Before" className="w-full h-auto rounded-lg" />
-                </div>
-                <div>
-                  <div className="text-white text-center py-2 mb-2 rounded-lg font-bold" style={{ background: '#1e3a6e' }}>
-                    {isAr ? 'بعد' : 'AFTER'}
-                  </div>
-                  <img src={lightboxImage.after} alt="After" className="w-full h-auto rounded-lg" />
-                </div>
-              </div>
-              <div className="rounded-lg p-6" style={{ background: 'white' }}>
-                <h3 className="text-2xl font-bold mb-2" style={{ color: '#1e3a6e' }}>
-                  {isAr ? lightboxImage.titleAr : lightboxImage.titleEn}
-                </h3>
-                <p style={{ color: '#5a7099' }}>
-                  {isAr ? lightboxImage.descAr : lightboxImage.descEn}
-                </p>
-              </div>
-            </motion.div>
+            {isAr ? images[index].label_ar : images[index].label_en}
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* CTA — exact header navy */}
-      <section className="py-16" style={{ background: '#1e3a6e' }} dir={dir}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
-            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-              {isAr ? 'هل أنت مستعد لتحولك الخاص؟' : 'Ready for Your Own Transformation?'}
-            </h2>
-            <p className="text-xl mb-8 max-w-2xl mx-auto" style={{ color: '#a8c4e8' }}>
-              {isAr
-                ? 'انضم إلى آلاف المرضى الراضين الذين استعادوا ثقتهم مع د. أحمد مجاهد'
-                : 'Join thousands of satisfied patients who have restored their confidence with Dr. Ahmed Megahed'}
-            </p>
-            <Link to="/book-appointment">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={images[index]?.id || index}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          {/* Comparison Slider */}
+          <ImageComparison 
+            before={images[index]?.before_image_url} 
+            after={images[index]?.after_image_url} 
+            isAr={isAr} 
+          />
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Navigation Controls */}
+      {images.length > 1 && (
+        <>
+          <div className={`absolute top-1/2 -translate-y-1/2 w-full flex justify-between px-4 z-20 pointer-events-none`}>
+            <button 
+              onClick={(e) => { e.preventDefault(); prev(); }} 
+              className="p-2.5 rounded-full bg-white/90 shadow-xl text-[#1e3a6e] hover:bg-white transition-all pointer-events-auto active:scale-90"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button 
+              onClick={(e) => { e.preventDefault(); next(); }} 
+              className="p-2.5 rounded-full bg-white/90 shadow-xl text-[#1e3a6e] hover:bg-white transition-all pointer-events-auto active:scale-90"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
+
+          {/* Dots Indicator */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20 bg-black/20 p-1.5 rounded-full backdrop-blur-sm">
+            {images.map((_, i) => (
               <button
-                className="px-8 py-4 rounded-xl font-semibold text-lg shadow-xl transition-colors"
-                style={{ background: 'white', color: '#1e3a6e' }}
-                onMouseEnter={e => e.currentTarget.style.background = '#f0f4fa'}
-                onMouseLeave={e => e.currentTarget.style.background = 'white'}
-              >
-                {isAr ? 'احجز استشارتك' : 'Schedule Your Consultation'}
-              </button>
-            </Link>
-          </motion.div>
+                key={i}
+                onClick={() => setIndex(i)}
+                className={`h-1.5 rounded-full transition-all duration-300 ${i === index ? 'w-6 bg-white' : 'w-1.5 bg-white/50'}`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+// ─── MAIN PAGE COMPONENT ───
+export default function BeforeAfterPage() {
+  const { isAr } = useLang();
+  const [gallery, setGallery] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('before_after_cases')
+          .select('*, case_images(*)')
+          .order('created_at', { ascending: false });
+          
+        if (error) throw error;
+        if (data) setGallery(data);
+      } catch (err) {
+        console.error("Fetch error:", err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchGallery();
+  }, []);
+
+  const categories = [
+    { id: 'all', en: 'All Results', ar: 'الكل' },
+    { id: 'transplant', en: 'Hair Transplant', ar: 'زراعة الشعر' },
+    { id: 'treatment', en: 'Hair Loss Treatment', ar: 'علاجات التساقط' },
+  ];
+
+  const filtered = selectedCategory === 'all' 
+    ? gallery 
+    : gallery.filter(i => i.category === selectedCategory);
+
+  if (loading) return (
+    <div className="h-screen flex flex-col items-center justify-center bg-[#f8fafc] gap-4">
+      <div className="w-8 h-8 border-4 border-[#1e3a6e] border-t-transparent rounded-full animate-spin" />
+      <p className="text-[#1e3a6e] font-bold animate-pulse">{isAr ? 'جاري تحميل النتائج...' : 'Loading Results...'}</p>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-[#f8fafc]" dir={isAr ? 'rtl' : 'ltr'}>
+      <Helmet><title>{isAr ? 'النتائج قبل وبعد | د. أحمد مجاهد' : 'Before & After Results | Dr. Ahmed Megahed'}</title></Helmet>
+
+      {/* Hero Header */}
+      <section className="py-24 bg-[#1e3a6e] text-white text-center relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+            <LayoutGrid className="w-full h-full" />
+        </div>
+        <div className="relative z-10 container mx-auto px-4">
+            <h1 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">
+                {isAr ? 'قصص نجاح مرضانا' : 'Our Patient Success Stories'}
+            </h1>
+            <p className="text-lg opacity-80 max-w-2xl mx-auto leading-relaxed">
+                {isAr 
+                  ? 'نتائج حقيقية تعكس خبرتنا والدقة المتناهية في زراعة وعلاج الشعر بأحدث التقنيات العالمية' 
+                  : 'Real results reflecting our expertise and precision in hair restoration using the latest global technologies.'}
+            </p>
         </div>
       </section>
-    </>
+
+      {/* Sticky Filter Bar */}
+      <div className="sticky top-16 z-[40] bg-white/80 backdrop-blur-xl border-b border-gray-100 py-6">
+        <div className="max-w-7xl mx-auto px-4 flex justify-center gap-3 flex-wrap">
+          {categories.map(cat => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`px-8 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${
+                selectedCategory === cat.id 
+                ? 'bg-[#1e3a6e] text-white shadow-xl shadow-[#1e3a6e]/20 scale-105' 
+                : 'bg-white text-[#5a7099] hover:bg-gray-50 border border-gray-100'
+              }`}
+            >
+              {isAr ? cat.ar : cat.en}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Gallery Grid */}
+      <section className="py-16 max-w-7xl mx-auto px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <AnimatePresence mode="popLayout">
+            {filtered.map((item) => (
+              <motion.div
+                key={item.id}
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="bg-white rounded-[2.5rem] overflow-hidden shadow-2xl shadow-blue-900/5 border border-gray-100 flex flex-col"
+              >
+                {/* Image Section with Carousel */}
+                <div className="w-full">
+                   <ResultCarousel images={item.case_images} isAr={isAr} />
+                </div>
+                
+                {/* Content Section */}
+                <div className="p-8 md:p-10 flex-1 flex flex-col justify-between bg-white">
+                  <div>
+                    <div className="flex justify-between items-start mb-4">
+                      <h3 className="font-black text-[#1e3a6e] text-2xl md:text-3xl leading-tight">
+                        {isAr ? item.patient_name_ar : item.patient_name_en}
+                      </h3>
+                      <span className="text-[10px] bg-[#e8eef8] text-[#1e3a6e] px-4 py-1.5 rounded-full font-black uppercase tracking-widest flex-shrink-0">
+                        {item.category}
+                      </span>
+                    </div>
+                    <p className="text-[#5a7099] leading-relaxed text-base md:text-lg mb-6">
+                      {isAr ? item.description_ar : item.description_en}
+                    </p>
+                  </div>
+
+                  <div className="pt-6 border-t border-gray-50 flex items-center justify-between">
+                     <span className="text-xs font-bold text-gray-300 uppercase tracking-widest">
+                        Case #{String(item.id).split('-')[0]}
+                     </span>
+                     <div className="h-1.5 w-12 bg-[#1e3a6e] rounded-full opacity-20" />
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+
+        {/* Empty State */}
+        {!loading && filtered.length === 0 && (
+          <div className="text-center py-32">
+            <div className="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-400">
+                <ImageIcon size={32} />
+            </div>
+            <h3 className="text-xl font-bold text-[#1e3a6e] mb-2">{isAr ? 'لا توجد نتائج حالياً' : 'No results found'}</h3>
+            <p className="text-gray-400">{isAr ? 'يرجى اختيار تصنيف آخر' : 'Please try selecting a different category'}</p>
+          </div>
+        )}
+      </section>
+    </div>
   );
 }
-
-export default BeforeAfterPage;

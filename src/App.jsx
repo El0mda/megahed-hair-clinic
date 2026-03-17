@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import ScrollToTop from '@/components/ScrollToTop';
 import MainLayout from '@/layouts/MainLayout';
 import HomePage from '@/pages/HomePage';
@@ -17,6 +17,52 @@ import { Toaster } from '@/components/ui/toaster';
 import { LangSplash, useLang } from '@/components/Header';
 import { motion } from 'framer-motion';
 
+// ─── Top Action Bar (High Visibility) ───────────────────────────────────────
+function StickyActionBar() {
+  const { isAr } = useLang();
+  const navigate = useNavigate();
+
+  const handleClinicWhatsApp = () => {
+    const phoneNumber = "201288979999";
+    const message = encodeURIComponent(isAr 
+      ? "مرحباً دكتور أحمد، أود حجز استشارة في العيادة." 
+      : "Hello Dr. Ahmed, I would like to book a Clinic Consultation.");
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+  };
+
+  return (
+    <div className="fixed top-28 left-1/2 -translate-x-1/2 z-[9999] w-[95%] max-w-lg pointer-events-none">
+      <motion.div 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="flex bg-[#1e3a6e] rounded-xl overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.3)] border border-white/20 pointer-events-auto"
+      >
+        {/* In-Clinic Button */}
+        <button 
+          onClick={handleClinicWhatsApp}
+          className="flex-1 py-4 px-4 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-white/10 transition-all border-r border-white/10"
+        >
+          <span className="text-lg">🏥</span>
+          <span className="whitespace-nowrap uppercase tracking-wider">
+            {isAr ? 'كشف بالعيادة' : 'In-Clinic Consultation'}
+          </span>
+        </button>
+
+        {/* Online Consultation Button */}
+        <button 
+          onClick={() => navigate('/book-appointment')}
+          className="flex-1 py-4 px-4 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-white/10 transition-all"
+        >
+          <span className="text-lg">💻</span>
+          <span className="whitespace-nowrap uppercase tracking-wider">
+            {isAr ? 'استشارة عن بعد (Online)' : 'Online Consultation'}
+          </span>
+        </button>
+      </motion.div>
+    </div>
+  );
+}
+
 // ─── WhatsApp Floating Button ─────────────────────────────────────────────────
 function WhatsAppFloat() {
   return (
@@ -30,7 +76,7 @@ function WhatsAppFloat() {
       transition={{ delay: 1, type: 'spring', stiffness: 260, damping: 20 }}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
-      className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center"
+      className="fixed bottom-6 right-6 z-[9999] w-14 h-14 rounded-full shadow-lg flex items-center justify-center"
       style={{ backgroundColor: '#25D366' }}
     >
       <span className="absolute inset-0 rounded-full animate-ping opacity-30" style={{ backgroundColor: '#25D366' }} />
@@ -43,32 +89,45 @@ function WhatsAppFloat() {
 
 function AppContent() {
   const { hasChosen } = useLang();
+  const location = useLocation();
+
+  // 1. Check if we are on the Admin page
+  const isAdminPath = location.pathname.startsWith('/admin');
+
+  // 2. Determine if the action bars should be visible
+  // Only show if: Language is chosen AND we are NOT on admin
+  const showOverlays = hasChosen && !isAdminPath;
 
   return (
     <>
-      {/* Popup blocks everything until language is picked */}
       {!hasChosen && <LangSplash />}
-
       <ScrollToTop />
+      
       <Routes>
-  <Route path="/" element={<MainLayout />}>
-    <Route index element={<HomePage />} />
-    <Route path="services" element={<ServicesPage />} />
-    <Route path="before-after" element={<BeforeAfterPage />} />
-    <Route path="about" element={<AboutPage />} />
-    <Route path="book-appointment" element={<AppointmentBookingPage />} />
-    <Route path="contact" element={<ContactPage />} />
-    <Route path="blogs" element={<BlogsPage />} />
-<Route path="blogs/articles" element={<ArticlesPage />} />
-<Route path="blogs/videos" element={<VideosPage />} />
-<Route path="blogs/:id" element={<BlogPostPage />} />
-  </Route>
-  <Route path="/admin" element={<AdminPage />} />
-</Routes>
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path="services" element={<ServicesPage />} />
+          <Route path="before-after" element={<BeforeAfterPage />} />
+          <Route path="about" element={<AboutPage />} />
+          <Route path="book-appointment" element={<AppointmentBookingPage />} />
+          <Route path="contact" element={<ContactPage />} />
+          <Route path="blogs" element={<BlogsPage />} />
+          <Route path="blogs/articles" element={<ArticlesPage />} />
+          <Route path="blogs/videos" element={<VideosPage />} />
+          <Route path="blogs/:id" element={<BlogPostPage />} />
+        </Route>
+        <Route path="/admin" element={<AdminPage />} />
+      </Routes>
+
       <Toaster />
 
-      {/* WhatsApp floating button — visible on all pages */}
-      <WhatsAppFloat />
+      {/* Conditionally Render Overlays */}
+      {showOverlays && (
+        <>
+          <StickyActionBar />
+          <WhatsAppFloat />
+        </>
+      )}
     </>
   );
 }
@@ -80,4 +139,5 @@ function App() {
     </BrowserRouter>
   );
 }
+
 export default App;

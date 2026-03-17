@@ -185,7 +185,7 @@ function FeeBanner({ isEgypt, isAr }) {
         <div className="space-y-2">
           <div className="flex justify-between items-center py-2 border-b border-green-100">
             <span className="text-gray-700 text-sm">{isAr ? 'الكشف أول مرة' : 'Initial Consultation'}</span>
-            <span className="font-bold text-green-700 text-lg">500 {isAr ? 'جنيه' : 'EGP'}</span>
+            <span className="font-bold text-green-700 text-lg">600 {isAr ? 'جنيه' : 'EGP'}</span>
           </div>
           <div className="flex justify-between items-center py-1">
             <span className="text-gray-700 text-sm">{isAr ? 'المتابعات' : 'Follow-up'}</span>
@@ -196,7 +196,7 @@ function FeeBanner({ isEgypt, isAr }) {
         <div className="space-y-2">
           <div className="flex justify-between items-center py-2 border-b border-[#1e3a6e]/30">
             <span className="text-gray-700 text-sm">{isAr ? 'الكشف أول مرة' : 'Initial Consultation'}</span>
-            <span className="font-bold text-[#1e3a6e] text-lg">$80 USD</span>
+            <span className="font-bold text-[#1e3a6e] text-lg">$90 USD</span>
           </div>
           <div className="flex justify-between items-center py-1">
             <span className="text-gray-700 text-sm">{isAr ? 'المتابعات' : 'Follow-up'}</span>
@@ -759,8 +759,8 @@ const validateForm = () => {
                             </p>
                             <p className={`text-xs mt-0.5 ${isEgyptUser ? 'text-green-700' : 'text-[#1e3a6e]'}`}>
                               {isEgyptUser
-                                ? 'Initial: 500 EGP • Follow-up: 300 EGP'
-                                : 'Initial: $80 USD • Follow-up: $50 USD'}
+                                ? 'Initial: 600 EGP • Follow-up: 300 EGP'
+                                : 'Initial: $90 USD • Follow-up: $50 USD'}
                             </p>
                           </motion.div>
                         )}
@@ -1458,8 +1458,8 @@ const validateForm = () => {
                           className="accent-[#1e3a6e] w-5 h-5 flex-shrink-0 mt-0.5" />
                         <span className="text-sm text-gray-800 leading-relaxed">
                           {isAr
-                            ? (isEgyptUser ? "أقر وأوافق على رسوم الاستشارة عبر الإنترنت: ٥٠٠ جنيه للكشف الأول و٣٠٠ جنيه للمتابعة." : "أقر وأوافق على رسوم الاستشارة عبر الإنترنت: ٨٠ دولار للكشف الأول و٦٠ دولار للمتابعة.")
-                            : (isEgyptUser ? "I acknowledge and accept that there is an online consultation fee of: 500 EGP for initial consultation and 300 EGP per follow-up appointment." : "I acknowledge and accept that there is an online consultation fee of: $80 USD for initial consultation and $60 USD per follow-up appointment.")
+                            ? (isEgyptUser ? "أقر وأوافق على رسوم الاستشارة عبر الإنترنت: 600 جنيه للكشف الأول و٣٠٠ جنيه للمتابعة." : "أقر وأوافق على رسوم الاستشارة عبر الإنترنت: 90 دولار للكشف الأول و٦٠ دولار للمتابعة.")
+                            : (isEgyptUser ? "I acknowledge and accept that there is an online consultation fee of: 600 EGP for initial consultation and 300 EGP per follow-up appointment." : "I acknowledge and accept that there is an online consultation fee of: $90 USD for initial consultation and $60 USD per follow-up appointment.")
                           }
                         </span>
                       </label>

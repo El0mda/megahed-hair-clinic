@@ -31,13 +31,24 @@ const branches = [
     serviceEn: 'Consultation & Hair Transplant Surgery',
     address: 'مركز DHC - حي الجامعة - امتداد شارع جيهان - أمام مطعم كنتاكي',
     addressEn: 'DHC Center, University District, Gehan St Extension, opp. KFC',
-    phones: ['+20502399903'],
-    whatsapp: ['+201025995096', '+201020008448'],
+    phones: ['+201288979999', '+201055339937'],
+    whatsapp: ['+201288979999', '+201055339937'],
   },
 ];
 
 function Footer() {
   const { isAr } = useLang();
+
+  // Helper to generate WhatsApp URL with custom message
+  const getWhatsAppLink = (number) => {
+    const cleanNumber = number.replace(/\D/g, '');
+    const message = encodeURIComponent(
+      isAr 
+        ? "مرحباً دكتور أحمد، أود الاستفسار عن خدمات عيادة الشعر." 
+        : "Hello Dr. Ahmed, I would like to inquire about your hair clinic services."
+    );
+    return `https://wa.me/${cleanNumber}?text=${message}`;
+  };
 
   return (
     <footer className="bg-gray-900 text-gray-300" dir={isAr ? 'rtl' : 'ltr'}>
@@ -84,29 +95,49 @@ function Footer() {
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
               {branches.map((b, i) => (
-                <div key={i} className="bg-gray-800 rounded-xl p-4 space-y-2">
+                <div key={i} className="bg-gray-800 rounded-xl p-4 space-y-2 flex flex-col h-full">
                   <p className="text-white font-semibold text-sm">{isAr ? b.name : b.nameEn}</p>
-                  <p className="text-blue-400 text-xs">{isAr ? b.service : b.serviceEn}</p>
+                  <p className="text-blue-400 text-[11px] leading-tight mb-1">{isAr ? b.service : b.serviceEn}</p>
+                  
                   <div className="flex items-start gap-2">
                     <MapPin className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 mt-0.5" />
                     <p className="text-xs text-gray-400 leading-relaxed">{isAr ? b.address : b.addressEn}</p>
                   </div>
-                  <div className="flex items-start gap-2">
+
+                  {/* Phone Numbers - NOW REDIRECT TO WHATSAPP */}
+                  <div className="flex items-start gap-2 mt-auto">
                     <Phone className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 mt-0.5" />
                     <div className="space-y-0.5">
                       {b.phones.map((p, j) => (
-                        <a key={j} href={`tel:${p}`} className="block text-xs text-gray-300 hover:text-blue-400 transition-colors">{p}</a>
+                        <a 
+                          key={j} 
+                          href={getWhatsAppLink(p)} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="block text-xs text-gray-300 hover:text-blue-400 transition-colors"
+                        >
+                          {p}
+                        </a>
                       ))}
                     </div>
                   </div>
+
                   {b.whatsapp.length > 0 && (
-                    <div className="flex items-start gap-2">
+                    <div className="flex items-start gap-2 pt-1 border-t border-gray-700 mt-1">
                       <svg className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ fill: '#25D366' }} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
                         <path d="M16 .5C7.44.5.5 7.44.5 16c0 2.83.74 5.49 2.04 7.8L.5 31.5l7.93-2.07A15.44 15.44 0 0 0 16 31.5C24.56 31.5 31.5 24.56 31.5 16S24.56.5 16 .5zm7.27 18.37c-.4-.2-2.35-1.16-2.72-1.29-.36-.13-.63-.2-.89.2s-1.02 1.29-1.25 1.56c-.23.26-.46.3-.86.1a10.84 10.84 0 0 1-3.19-1.97 11.96 11.96 0 0 1-2.21-2.75c-.23-.4-.02-.61.17-.81.18-.18.4-.46.6-.69.2-.23.26-.4.4-.66.13-.26.07-.5-.03-.69-.1-.2-.89-2.15-1.22-2.94-.32-.77-.65-.67-.89-.68h-.76c-.26 0-.69.1-1.05.5s-1.38 1.35-1.38 3.3 1.41 3.83 1.61 4.09c.2.27 2.78 4.24 6.73 5.95.94.4 1.67.65 2.24.83.94.3 1.8.26 2.47.16.75-.11 2.35-.96 2.68-1.89.33-.92.33-1.71.23-1.88-.1-.17-.36-.27-.76-.47z" />
                       </svg>
                       <div className="space-y-0.5">
                         {b.whatsapp.map((w, j) => (
-                          <a key={j} href={`https://wa.me/${w.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="block text-xs text-gray-300 hover:text-green-400 transition-colors">{w}</a>
+                          <a 
+                            key={j} 
+                            href={getWhatsAppLink(w)} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="block text-xs text-gray-300 hover:text-green-400 transition-colors"
+                          >
+                            {w}
+                          </a>
                         ))}
                       </div>
                     </div>
@@ -124,10 +155,10 @@ function Footer() {
             © {new Date().getFullYear()} Dr. Megahed Hair Transplant Clinic. {isAr ? 'جميع الحقوق محفوظة.' : 'All rights reserved.'}
           </p>
           <div className="flex space-x-3">
-            <a href="#" className="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors">
+            <a href="https://www.facebook.com/DrAhmedMegahedHairClinic" target="_blank" rel="noreferrer" className="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors">
               <Facebook className="w-4 h-4" />
             </a>
-            <a href="#" className="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-600 transition-colors">
+            <a href="https://www.instagram.com/drahmedmegahed_hairclinic/" target="_blank" rel="noreferrer" className="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-600 transition-colors">
               <Instagram className="w-4 h-4" />
             </a>
             <a href="#" className="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors">

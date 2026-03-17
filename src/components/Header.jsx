@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Phone, ChevronDown } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom'; // Added useNavigate
+import { Menu, X, Phone, ChevronDown, Stethoscope, Video, Building2 } from 'lucide-react'; // Added icons
 import { Button } from '@/components/ui/button';
+import { motion, AnimatePresence } from 'framer-motion'; // Added for modal animation
 
 // ─── Shared lang store ────────────────────────────────────────────────────────
 let _lang = (() => { try { return localStorage.getItem('lang') || 'en'; } catch { return 'en'; } })();
@@ -76,6 +77,10 @@ const translations = {
     articles: 'Articles',
     videos: 'Videos',
     book: 'Book Appointment',
+    modalTitle: 'Consultation Type',
+    transplant: 'Hair Transplant Consultation',
+    online: 'Online Consultation',
+    clinic: 'Contact Us', // Changed from "Clinic Consultation (WhatsApp)" to "Contact Us"
   },
   ar: {
     nav: ['الرئيسية', 'الخدمات', 'قبل وبعد', 'عن الدكتور', 'زراعة الشعر'],
@@ -83,6 +88,10 @@ const translations = {
     articles: 'مقالات',
     videos: 'فيديوهات',
     book: 'احجز موعد',
+    modalTitle: 'نوع الاستشارة',
+    transplant: 'استشارة زراعة الشعر',
+    online: 'استشارة أونلاين',
+    clinic: 'تواصل معنا', // Changed from "استشارة بالعيادة (WhatsApp)" to "تواصل معنا"
   },
 };
 
@@ -90,15 +99,27 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [educationOpen, setEducationOpen] = useState(false);
   const [mobileEducationOpen, setMobileEducationOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Global Modal state
+  
   const { lang, isAr } = useLang();
   const location = useLocation();
+  const navigate = useNavigate();
   const t = translations[lang];
   const dropdownRef = useRef(null);
 
   const navPaths = ['/', '/services', '/before-after', '/about', '/contact'];
   const isActive = (path) => location.pathname === path;
 
-  // Close dropdown when clicking outside
+  // Handlers
+  const handleClinicConsultation = () => {
+    const phoneNumber = "201288979999";
+    const message = encodeURIComponent(isAr 
+      ? "مرحباً دكتور أحمد، أود حجز استشارة في العيادة." 
+      : "Hello Dr. Ahmed, I would like to book a Clinic Consultation.");
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+    setIsModalOpen(false);
+  };
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -109,164 +130,111 @@ function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Close dropdown on route change
   useEffect(() => {
     setEducationOpen(false);
     setMobileEducationOpen(false);
+    setIsMenuOpen(false);
   }, [location.pathname]);
 
   return (
-    <header
-      className="bg-[#1e3a6e] border-b border-[#162d57] sticky top-0 z-50 shadow-md"
-      dir={isAr ? 'rtl' : 'ltr'}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-2">
-          <Link to="/" className="flex items-center">
-            <img
-              src="https://res.cloudinary.com/dbxpapbtb/image/upload/v1773240719/Screenshot_from_2026-03-11_16-23-45-removebg-preview_1_mgwtpj.png"
-              alt="Dr. Megahed Hair Clinic"
-              className="h-[120px] object-contain mix-blend-screen"
-            />
-          </Link>
-
-          {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center space-x-1 rtl:space-x-reverse">
-            {t.nav.map((label, i) => (
-              <Link
-                key={navPaths[i]}
-                to={navPaths[i]}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive(navPaths[i])
-                    ? 'text-white bg-white/20'
-                    : 'text-blue-100 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                {label}
-              </Link>
-            ))}
-
-            {/* Patient Education Dropdown */}
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setEducationOpen(!educationOpen)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1 ${
-                  location.pathname.startsWith('/blogs')
-                    ? 'text-white bg-white/20'
-                    : 'text-blue-100 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                {t.education}
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${educationOpen ? 'rotate-180' : ''}`} />
-              </button>
-              {educationOpen && (
-                <div
-                  className="absolute top-full mt-2 w-48 bg-white rounded-xl shadow-2xl overflow-hidden z-50 border border-gray-100"
-                  style={{ [isAr ? 'right' : 'left']: 0 }}
-                >
-                  <Link
-                    to="/blogs/articles"
-                    onClick={() => setEducationOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-[#f0f4fa] hover:text-[#1e3a6e] transition-colors"
-                  >
-                    <span className="text-base">📄</span>
-                    {t.articles}
-                  </Link>
-                  <div className="h-px bg-gray-100" />
-                  <Link
-                    to="/blogs/videos"
-                    onClick={() => setEducationOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-[#f0f4fa] hover:text-[#1e3a6e] transition-colors"
-                  >
-                    <span className="text-base">🎥</span>
-                    {t.videos}
-                  </Link>
-                </div>
-              )}
-            </div>
-
-            <Link to="/book-appointment">
-              <Button className="ml-2 rtl:mr-2 rtl:ml-0 bg-white text-[#1e3a6e] hover:bg-blue-50 font-semibold">
-                <Phone className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
-                {t.book}
-              </Button>
+    <>
+      <header className="bg-[#1e3a6e] border-b border-[#162d57] sticky top-0 z-50 shadow-md" dir={isAr ? 'rtl' : 'ltr'}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-2">
+            <Link to="/" className="flex items-center">
+              <img src="https://res.cloudinary.com/dbxpapbtb/image/upload/v1773240719/Screenshot_from_2026-03-11_16-23-45-removebg-preview_1_mgwtpj.png" alt="Dr. Megahed Hair Clinic" className="h-[120px] object-contain mix-blend-screen" />
             </Link>
-          </nav>
 
-          {/* Mobile hamburger */}
-          <div className="lg:hidden flex items-center gap-2">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 rounded-lg text-white hover:bg-white/10"
-            >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Nav */}
-        {isMenuOpen && (
-          <nav className="lg:hidden py-4 border-t border-white/10">
-            <div className="flex flex-col space-y-2">
+            {/* Desktop Nav */}
+            <nav className="hidden lg:flex items-center space-x-1 rtl:space-x-reverse">
               {t.nav.map((label, i) => (
-                <Link
-                  key={navPaths[i]}
-                  to={navPaths[i]}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isActive(navPaths[i])
-                      ? 'text-white bg-white/20'
-                      : 'text-blue-100 hover:text-white hover:bg-white/10'
-                  }`}
-                >
+                <Link key={navPaths[i]} to={navPaths[i]} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive(navPaths[i]) ? 'text-white bg-white/20' : 'text-blue-100 hover:text-white hover:bg-white/10'}`}>
                   {label}
                 </Link>
               ))}
 
-              {/* Mobile Education Dropdown */}
-              <div>
-                <button
-                  onClick={() => setMobileEducationOpen(!mobileEducationOpen)}
-                  className={`w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-between ${
-                    location.pathname.startsWith('/blogs')
-                      ? 'text-white bg-white/20'
-                      : 'text-blue-100 hover:text-white hover:bg-white/10'
-                  }`}
-                >
+              <div className="relative" ref={dropdownRef}>
+                <button onClick={() => setEducationOpen(!educationOpen)} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1 ${location.pathname.startsWith('/blogs') ? 'text-white bg-white/20' : 'text-blue-100 hover:text-white hover:bg-white/10'}`}>
                   {t.education}
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${mobileEducationOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${educationOpen ? 'rotate-180' : ''}`} />
                 </button>
-                {mobileEducationOpen && (
-                  <div className="mt-1 ml-4 flex flex-col space-y-1 border-l-2 border-white/20 pl-3">
-                    <Link
-                      to="/blogs/articles"
-                      onClick={() => { setIsMenuOpen(false); setMobileEducationOpen(false); }}
-                      className="px-3 py-2 rounded-lg text-sm font-medium text-blue-100 hover:text-white hover:bg-white/10 flex items-center gap-2"
-                    >
-                      📄 {t.articles}
+                {educationOpen && (
+                  <div className="absolute top-full mt-2 w-48 bg-white rounded-xl shadow-2xl overflow-hidden z-50 border border-gray-100" style={{ [isAr ? 'right' : 'left']: 0 }}>
+                    <Link to="/blogs/articles" className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-[#f0f4fa] hover:text-[#1e3a6e]">
+                      <span>📄</span> {t.articles}
                     </Link>
-                    <Link
-                      to="/blogs/videos"
-                      onClick={() => { setIsMenuOpen(false); setMobileEducationOpen(false); }}
-                      className="px-3 py-2 rounded-lg text-sm font-medium text-blue-100 hover:text-white hover:bg-white/10 flex items-center gap-2"
-                    >
-                      🎥 {t.videos}
+                    <Link to="/blogs/videos" className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-[#f0f4fa] hover:text-[#1e3a6e]">
+                      <span>🎥</span> {t.videos}
                     </Link>
                   </div>
                 )}
               </div>
 
-              <Link to="/book-appointment" onClick={() => setIsMenuOpen(false)}>
-                <Button className="w-full bg-white text-[#1e3a6e] hover:bg-blue-50 font-semibold">
+              {/* Desktop Trigger */}
+              <Button onClick={() => setIsModalOpen(true)} className="ml-2 rtl:mr-2 rtl:ml-0 bg-white text-[#1e3a6e] hover:bg-blue-50 font-semibold shadow-lg">
+                <Phone className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
+                {t.book}
+              </Button>
+            </nav>
+
+            {/* Mobile hamburger */}
+            <div className="lg:hidden flex items-center gap-2">
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-lg text-white hover:bg-white/10">
+                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Nav */}
+          {isMenuOpen && (
+            <nav className="lg:hidden py-4 border-t border-white/10 animate-in slide-in-from-top-2 duration-200">
+              <div className="flex flex-col space-y-2">
+                {t.nav.map((label, i) => (
+                  <Link key={navPaths[i]} to={navPaths[i]} className={`px-4 py-2 rounded-lg text-sm font-medium ${isActive(navPaths[i]) ? 'text-white bg-white/20' : 'text-blue-100'}`}>
+                    {label}
+                  </Link>
+                ))}
+                
+                {/* Mobile Trigger */}
+                <Button onClick={() => { setIsMenuOpen(false); setIsModalOpen(true); }} className="w-full bg-white text-[#1e3a6e] font-semibold">
                   <Phone className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
                   {t.book}
                 </Button>
-              </Link>
-            </div>
-          </nav>
+              </div>
+            </nav>
+          )}
+        </div>
+      </header>
+
+      {/* --- SHARED BOOKING MODAL --- */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 overflow-hidden" dir={isAr ? 'rtl' : 'ltr'}>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-[#1e3a6e]">{t.modalTitle}</h3>
+                <button onClick={() => setIsModalOpen(false)}><X className="w-6 h-6 text-gray-400" /></button>
+              </div>
+              <div className="space-y-3">
+                <button onClick={() => { navigate('/book-appointment'); setIsModalOpen(false); }} className="w-full flex items-center p-4 border-2 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all text-left rtl:text-right">
+                  <Stethoscope className={`${isAr ? 'ml-4' : 'mr-4'} w-8 h-8 text-blue-600`} />
+                  <div className="font-bold">{t.transplant}</div>
+                </button>
+                <button onClick={() => { navigate('/book-appointment'); setIsModalOpen(false); }} className="w-full flex items-center p-4 border-2 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all text-left rtl:text-right">
+                  <Video className={`${isAr ? 'ml-4' : 'mr-4'} w-8 h-8 text-blue-600`} />
+                  <div className="font-bold">{t.online}</div>
+                </button>
+                <button onClick={handleClinicConsultation} className="w-full flex items-center p-4 border-2 border-gray-100 rounded-xl hover:border-green-500 hover:bg-green-50 transition-all text-left rtl:text-right">
+                  <Building2 className={`${isAr ? 'ml-4' : 'mr-4'} w-8 h-8 text-green-600`} />
+                  <div className="font-bold text-green-700">{t.clinic}</div>
+                </button>
+              </div>
+            </motion.div>
+          </div>
         )}
-      </div>
-    </header>
+      </AnimatePresence>
+    </>
   );
 }
 

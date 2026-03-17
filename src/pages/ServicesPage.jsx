@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Added useNavigate
 import { Button } from '@/components/ui/button';
-import { CheckCircle, Calendar, ChevronDown, ChevronUp, Stethoscope, Syringe, Scissors } from 'lucide-react';
+import { 
+  CheckCircle, Calendar, ChevronDown, ChevronUp, Stethoscope, 
+  Syringe, Scissors, X, Video, Building2 
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLang } from '@/components/Header';
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
+// ... (conditions, nonsurgical, transplants data objects remain exactly the same)
 const conditions = {
   en: [
     {
@@ -102,7 +105,6 @@ const transplants = {
   ]
 };
 
-// ─── Accordion Card ───────────────────────────────────────────────────────────
 function AccordionCard({ title, desc, index }) {
   const [open, setOpen] = useState(false);
   return (
@@ -142,7 +144,6 @@ function AccordionCard({ title, desc, index }) {
   );
 }
 
-// ─── Service Card ─────────────────────────────────────────────────────────────
 function ServiceCard({ title, desc, index, accent }) {
   const isNavy = accent === 'blue';
   return (
@@ -171,7 +172,6 @@ function ServiceCard({ title, desc, index, accent }) {
   );
 }
 
-// ─── Tab definitions ──────────────────────────────────────────────────────────
 const TABS = {
   en: [
     { id: 'diagnosis', label: 'Diagnosis', icon: Stethoscope },
@@ -185,14 +185,24 @@ const TABS = {
   ],
 };
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
 function ServicesPage() {
   const { isAr } = useLang();
+  const navigate = useNavigate();
   const dir = isAr ? 'rtl' : 'ltr';
   const lang = isAr ? 'ar' : 'en';
 
   const [activeTab, setActiveTab] = useState('diagnosis');
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const tabs = TABS[lang];
+
+  const handleClinicConsultation = () => {
+    const phoneNumber = "201288979999";
+    const message = encodeURIComponent(isAr 
+      ? "مرحباً دكتور أحمد، أود حجز استشارة في العيادة." 
+      : "Hello Dr. Ahmed, I would like to book a Clinic Consultation.");
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+    setIsModalOpen(false);
+  };
 
   return (
     <>
@@ -200,21 +210,13 @@ function ServicesPage() {
         <title>{isAr ? 'خدمات العيادة — د. أحمد مجاهد' : 'Services — Dr. Ahmed Megahed'}</title>
       </Helmet>
 
-      {/* Hero — exact header navy */}
-      <section
-        className="text-white py-16"
-        style={{ background: 'linear-gradient(135deg, #162d57 0%, #1e3a6e 50%, #253f7a 100%)' }}
-        dir={dir}
-      >
+      {/* Hero Section */}
+      <section className="text-white py-16" style={{ background: 'linear-gradient(135deg, #162d57 0%, #1e3a6e 50%, #253f7a 100%)' }} dir={dir}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <h1 className="text-4xl lg:text-5xl font-bold mb-4 text-white">
-              {isAr ? 'خدمات العيادة' : 'Our Services'}
-            </h1>
+            <h1 className="text-4xl lg:text-5xl font-bold mb-4 text-white">{isAr ? 'خدمات العيادة' : 'Our Services'}</h1>
             <p className="text-xl max-w-3xl mx-auto" style={{ color: '#a8c4e8' }}>
-              {isAr
-                ? 'نقدم أحدث العلاجات لمختلف مشاكل الشعر وفروة الرأس'
-                : 'Comprehensive hair and scalp care using the latest techniques and technologies'}
+              {isAr ? 'نقدم أحدث العلاجات لمختلف مشاكل الشعر وفروة الرأس' : 'Comprehensive hair and scalp care using the latest techniques.'}
             </p>
           </motion.div>
         </div>
@@ -237,10 +239,8 @@ function ServicesPage() {
                     color: isActive ? '#1e3a6e' : '#7a96c2',
                     background: isActive ? '#f0f4fa' : 'transparent',
                   }}
-                  onMouseEnter={e => { if (!isActive) { e.currentTarget.style.color = '#1e3a6e'; e.currentTarget.style.background = '#f7f9fd'; } }}
-                  onMouseLeave={e => { if (!isActive) { e.currentTarget.style.color = '#7a96c2'; e.currentTarget.style.background = 'transparent'; } }}
                 >
-                  <Icon className="w-4 h-4 flex-shrink-0" style={{ color: isActive ? '#1e3a6e' : '#7a96c2' }} />
+                  <Icon className="w-4 h-4" />
                   <span>{tab.label}</span>
                 </button>
               );
@@ -251,36 +251,10 @@ function ServicesPage() {
 
       {/* Tab Content */}
       <section className="py-16 min-h-[60vh]" style={{ background: '#f0f4fa' }} dir={dir}>
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-
+        <div className="max-w-5xl mx-auto px-4">
           <AnimatePresence mode="wait">
-
-            {/* ── Diagnosis ── */}
             {activeTab === 'diagnosis' && (
-              <motion.div
-                key="diagnosis"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="text-center mb-10">
-                  <span
-                    className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full mb-3"
-                    style={{ background: '#e8eef8', color: '#1e3a6e' }}
-                  >
-                    <Stethoscope className="w-3.5 h-3.5" />
-                    {isAr ? 'التشخيص' : 'Diagnosis'}
-                  </span>
-                  <h2 className="text-3xl lg:text-4xl font-bold mb-3" style={{ color: '#1e3a6e' }}>
-                    {isAr ? 'أمراض الشعر وفروة الرأس' : 'Hair and Scalp Conditions'}
-                  </h2>
-                  <p className="text-lg max-w-2xl mx-auto" style={{ color: '#5a7099' }}>
-                    {isAr
-                      ? 'نقدم تقييمًا دقيقًا وإدارة متخصصة لكامل طيف أمراض الشعر وفروة الرأس'
-                      : 'Expert evaluation and management of the full spectrum of hair and scalp disorders'}
-                  </p>
-                </div>
+              <motion.div key="diagnosis" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
                 <div className="space-y-3">
                   {conditions[lang].map((c, i) => (
                     <AccordionCard key={i} index={i} title={c.title} desc={c.desc} />
@@ -288,33 +262,8 @@ function ServicesPage() {
                 </div>
               </motion.div>
             )}
-
-            {/* ── Non-Surgical ── */}
             {activeTab === 'nonsurgical' && (
-              <motion.div
-                key="nonsurgical"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="text-center mb-10">
-                  <span
-                    className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full mb-3"
-                    style={{ background: '#e8eef8', color: '#1e3a6e' }}
-                  >
-                    <Syringe className="w-3.5 h-3.5" />
-                    {isAr ? 'غير جراحي' : 'Non-Surgical'}
-                  </span>
-                  <h2 className="text-3xl lg:text-4xl font-bold mb-3" style={{ color: '#1e3a6e' }}>
-                    {isAr ? 'العلاجات غير الجراحية' : 'Non-Surgical Treatments'}
-                  </h2>
-                  <p className="text-lg max-w-2xl mx-auto" style={{ color: '#5a7099' }}>
-                    {isAr
-                      ? 'علاجات متطورة لتحفيز نمو الشعر وتعزيز صحة فروة الرأس دون تدخل جراحي'
-                      : 'Advanced treatments to stimulate hair growth and improve scalp health — no surgery required'}
-                  </p>
-                </div>
+              <motion.div key="nonsurgical" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {nonsurgical[lang].map((s, i) => (
                     <ServiceCard key={i} index={i} title={s.title} desc={s.desc} accent="blue" />
@@ -322,33 +271,8 @@ function ServicesPage() {
                 </div>
               </motion.div>
             )}
-
-            {/* ── Surgical ── */}
             {activeTab === 'surgical' && (
-              <motion.div
-                key="surgical"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="text-center mb-10">
-                  <span
-                    className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full mb-3"
-                    style={{ background: '#d4edda', color: '#2d7a4f' }}
-                  >
-                    <Scissors className="w-3.5 h-3.5" />
-                    {isAr ? 'جراحي' : 'Surgical'}
-                  </span>
-                  <h2 className="text-3xl lg:text-4xl font-bold mb-3" style={{ color: '#1e3a6e' }}>
-                    {isAr ? 'العلاجات الجراحية' : 'Hair Transplants & Surgical Procedures'}
-                  </h2>
-                  <p className="text-lg max-w-2xl mx-auto" style={{ color: '#5a7099' }}>
-                    {isAr
-                      ? 'إجراءات جراحية دقيقة لاستعادة الشعر بشكل دائم وطبيعي'
-                      : 'Precision surgical procedures for permanent, natural-looking hair restoration'}
-                  </p>
-                </div>
+              <motion.div key="surgical" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {transplants[lang].map((s, i) => (
                     <ServiceCard key={i} index={i} title={s.title} desc={s.desc} accent="green" />
@@ -356,38 +280,49 @@ function ServicesPage() {
                 </div>
               </motion.div>
             )}
-
           </AnimatePresence>
         </div>
       </section>
 
-      {/* CTA — exact header navy */}
+      {/* CTA Section — TRIGGERS MODAL */}
       <section className="py-16" style={{ background: '#1e3a6e' }} dir={dir}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
-            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-              {isAr ? 'ابدأ رحلتك نحو شعر أفضل' : 'Ready to Begin Your Hair Restoration Journey?'}
-            </h2>
-            <p className="text-xl mb-8 max-w-2xl mx-auto" style={{ color: '#a8c4e8' }}>
-              {isAr
-                ? 'احجز استشارتك مع د.أحمد مجاهد لمناقشة أفضل خيار علاجي لحالتك'
-                : 'Schedule a consultation to discuss the best treatment option for your needs'}
-            </p>
-            <Link to="/book-appointment">
-              <Button
-                size="lg"
-                className="font-semibold shadow-xl"
-                style={{ background: 'white', color: '#1e3a6e' }}
-                onMouseEnter={e => e.currentTarget.style.background = '#f0f4fa'}
-                onMouseLeave={e => e.currentTarget.style.background = 'white'}
-              >
-                <Calendar className="w-5 h-5 mr-2" />
-                {isAr ? 'احجز موعداً' : 'Book Your Consultation'}
-              </Button>
-            </Link>
-          </motion.div>
+        <div className="max-w-7xl mx-auto px-4 text-center text-white">
+          <h2 className="text-3xl font-bold mb-8">{isAr ? 'ابدأ رحلتك نحو شعر أفضل' : 'Ready to Begin?'}</h2>
+          <Button onClick={() => setIsModalOpen(true)} size="lg" style={{ background: 'white', color: '#1e3a6e' }}>
+            <Calendar className="w-5 h-5 mr-2" />
+            {isAr ? 'احجز موعداً' : 'Book Your Consultation'}
+          </Button>
         </div>
       </section>
+
+      {/* --- CONSULTATION MODAL --- */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 z-[101]" dir={dir}>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-2xl font-bold text-gray-900" style={{ color: '#1e3a6e' }}>{isAr ? 'نوع الاستشارة' : 'Consultation Type'}</h3>
+                <button onClick={() => setIsModalOpen(false)}><X className="w-6 h-6 text-gray-400" /></button>
+              </div>
+              <div className="space-y-3">
+                <button onClick={() => {navigate('/book-appointment'); setIsModalOpen(false);}} className="w-full flex items-center p-4 border-2 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all text-left">
+                  <Stethoscope className={`${isAr ? 'ml-4' : 'mr-4'} w-8 h-8 text-blue-600`} />
+                  <div className="font-bold">{isAr ? 'استشارة زراعة الشعر' : 'Hair Transplant Consultation'}</div>
+                </button>
+                <button onClick={() => {navigate('/book-appointment'); setIsModalOpen(false);}} className="w-full flex items-center p-4 border-2 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all text-left">
+                  <Video className={`${isAr ? 'ml-4' : 'mr-4'} w-8 h-8 text-blue-600`} />
+                  <div className="font-bold">{isAr ? 'استشارة أونلاين' : 'Online Consultation'}</div>
+                </button>
+                <button onClick={handleClinicConsultation} className="w-full flex items-center p-4 border-2 border-gray-100 rounded-xl hover:border-green-500 hover:bg-green-50 transition-all text-left">
+                  <Building2 className={`${isAr ? 'ml-4' : 'mr-4'} w-8 h-8 text-green-600`} />
+                  <div className="font-bold text-green-700">{isAr ? 'تواصل معنا' : 'Contact Us'}</div>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
