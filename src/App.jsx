@@ -17,53 +17,55 @@ import { Toaster } from '@/components/ui/toaster';
 import { LangSplash, useLang } from '@/components/Header';
 import { motion } from 'framer-motion';
 
-// ─── Top Action Bar (High Visibility) ───────────────────────────────────────
+// ─── Sticky Action Bar ────────────────────────────────────────────────────────
 function StickyActionBar() {
   const { isAr } = useLang();
   const navigate = useNavigate();
 
   const handleClinicWhatsApp = () => {
     const phoneNumber = "201288979999";
-    const message = encodeURIComponent(isAr 
-      ? "مرحباً دكتور أحمد، أود حجز استشارة في العيادة." 
+    const message = encodeURIComponent(isAr
+      ? "مرحباً دكتور أحمد، أود حجز استشارة في العيادة."
       : "Hello Dr. Ahmed, I would like to book a Clinic Consultation.");
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
   };
 
   return (
-    <div className="fixed top-28 left-1/2 -translate-x-1/2 z-[9999] w-[95%] max-w-lg pointer-events-none">
-      <motion.div 
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="flex bg-[#1e3a6e] rounded-xl overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.3)] border border-white/20 pointer-events-auto"
-      >
-        {/* In-Clinic Button */}
-        <button 
+    <motion.div
+      initial={{ y: -8, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ delay: 0.3 }}
+      className="w-full bg-[#1e3a6e] border-b border-white/10 shadow-lg z-[9000]"
+      style={{ direction: isAr ? 'rtl' : 'ltr' }}
+    >
+      <div className="flex max-w-3xl mx-auto">
+        {/* In-Clinic */}
+        <button
           onClick={handleClinicWhatsApp}
-          className="flex-1 py-4 px-4 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-white/10 transition-all border-r border-white/10"
+          className="flex-1 py-3 px-3 text-white font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1.5 hover:bg-white/10 transition-all border-r border-white/10 active:bg-white/20"
         >
-          <span className="text-lg">🏥</span>
-          <span className="whitespace-nowrap uppercase tracking-wider">
+          <span className="text-base">🏥</span>
+          <span className="uppercase tracking-wide whitespace-nowrap">
             {isAr ? 'كشف بالعيادة' : 'In-Clinic Consultation'}
           </span>
         </button>
 
-        {/* Online Consultation Button */}
-        <button 
+        {/* Online */}
+        <button
           onClick={() => navigate('/book-appointment')}
-          className="flex-1 py-4 px-4 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-white/10 transition-all"
+          className="flex-1 py-3 px-3 text-white font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1.5 hover:bg-white/10 transition-all active:bg-white/20"
         >
-          <span className="text-lg">💻</span>
-          <span className="whitespace-nowrap uppercase tracking-wider">
-            {isAr ? 'استشارة عن بعد (Online)' : 'Online Consultation'}
+          <span className="text-base">💻</span>
+          <span className="uppercase tracking-wide whitespace-nowrap">
+            {isAr ? 'استشارة عن بعد' : 'Online Consultation'}
           </span>
         </button>
-      </motion.div>
-    </div>
+      </div>
+    </motion.div>
   );
 }
 
-// ─── WhatsApp Floating Button ─────────────────────────────────────────────────
+// ─── WhatsApp Float ───────────────────────────────────────────────────────────
 function WhatsAppFloat() {
   return (
     <motion.a
@@ -87,22 +89,22 @@ function WhatsAppFloat() {
   );
 }
 
+// ─── App Content ──────────────────────────────────────────────────────────────
 function AppContent() {
   const { hasChosen } = useLang();
   const location = useLocation();
 
-  // 1. Check if we are on the Admin page
   const isAdminPath = location.pathname.startsWith('/admin');
-
-  // 2. Determine if the action bars should be visible
-  // Only show if: Language is chosen AND we are NOT on admin
   const showOverlays = hasChosen && !isAdminPath;
 
   return (
     <>
       {!hasChosen && <LangSplash />}
       <ScrollToTop />
-      
+
+      {/* Action bar sits between header and page content — part of the normal flow */}
+      {showOverlays && <StickyActionBar />}
+
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<HomePage />} />
@@ -121,17 +123,12 @@ function AppContent() {
 
       <Toaster />
 
-      {/* Conditionally Render Overlays */}
-      {showOverlays && (
-        <>
-          <StickyActionBar />
-          <WhatsAppFloat />
-        </>
-      )}
+      {showOverlays && <WhatsAppFloat />}
     </>
   );
 }
 
+// ─── App ──────────────────────────────────────────────────────────────────────
 function App() {
   return (
     <BrowserRouter>
