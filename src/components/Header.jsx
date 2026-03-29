@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom'; // Added useNavigate
-import { Menu, X, Phone, ChevronDown, Stethoscope, Video, Building2 } from 'lucide-react'; // Added icons
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X, Phone, ChevronDown, Stethoscope, Video, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { motion, AnimatePresence } from 'framer-motion'; // Added for modal animation
+import { motion, AnimatePresence } from 'framer-motion';
 
 // ─── Shared lang store ────────────────────────────────────────────────────────
 let _lang = (() => { try { return localStorage.getItem('lang') || 'en'; } catch { return 'en'; } })();
@@ -80,7 +80,7 @@ const translations = {
     modalTitle: 'Consultation Type',
     transplant: 'Hair Transplant Consultation',
     online: 'Online Consultation',
-    clinic: 'Contact Us', // Changed from "Clinic Consultation (WhatsApp)" to "Contact Us"
+    clinic: 'Contact Us',
   },
   ar: {
     nav: ['الرئيسية', 'الخدمات', 'قبل وبعد', 'عن الدكتور', 'زراعة الشعر'],
@@ -91,7 +91,7 @@ const translations = {
     modalTitle: 'نوع الاستشارة',
     transplant: 'استشارة زراعة الشعر',
     online: 'استشارة أونلاين',
-    clinic: 'تواصل معنا', // Changed from "استشارة بالعيادة (WhatsApp)" to "تواصل معنا"
+    clinic: 'تواصل معنا',
   },
 };
 
@@ -99,8 +99,8 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [educationOpen, setEducationOpen] = useState(false);
   const [mobileEducationOpen, setMobileEducationOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Global Modal state
-  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const { lang, isAr } = useLang();
   const location = useLocation();
   const navigate = useNavigate();
@@ -110,11 +110,10 @@ function Header() {
   const navPaths = ['/', '/services', '/before-after', '/about', '/contact'];
   const isActive = (path) => location.pathname === path;
 
-  // Handlers
   const handleClinicConsultation = () => {
     const phoneNumber = "201288979999";
-    const message = encodeURIComponent(isAr 
-      ? "مرحباً دكتور أحمد، أود حجز استشارة في العيادة." 
+    const message = encodeURIComponent(isAr
+      ? "مرحباً دكتور أحمد، أود حجز استشارة في العيادة."
       : "Hello Dr. Ahmed, I would like to book a Clinic Consultation.");
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
     setIsModalOpen(false);
@@ -170,7 +169,6 @@ function Header() {
                 )}
               </div>
 
-              {/* Desktop Trigger */}
               <Button onClick={() => setIsModalOpen(true)} className="ml-2 rtl:mr-2 rtl:ml-0 bg-white text-[#1e3a6e] hover:bg-blue-50 font-semibold shadow-lg">
                 <Phone className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
                 {t.book}
@@ -194,8 +192,29 @@ function Header() {
                     {label}
                   </Link>
                 ))}
-                
-                {/* Mobile Trigger */}
+
+                {/* ✅ Mobile Patient Education Dropdown */}
+                <div>
+                  <button
+                    onClick={() => setMobileEducationOpen(!mobileEducationOpen)}
+                    className={`w-full px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-between ${location.pathname.startsWith('/blogs') ? 'text-white bg-white/20' : 'text-blue-100'}`}
+                  >
+                    {t.education}
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${mobileEducationOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {mobileEducationOpen && (
+                    <div className="mt-1 flex flex-col space-y-1" style={{ paddingInlineStart: '1rem' }}>
+                      <Link to="/blogs/articles" className="px-4 py-2 rounded-lg text-sm font-medium text-blue-100 flex items-center gap-2">
+                        <span>📄</span> {t.articles}
+                      </Link>
+                      <Link to="/blogs/videos" className="px-4 py-2 rounded-lg text-sm font-medium text-blue-100 flex items-center gap-2">
+                        <span>🎥</span> {t.videos}
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                {/* Mobile Book Button */}
                 <Button onClick={() => { setIsMenuOpen(false); setIsModalOpen(true); }} className="w-full bg-white text-[#1e3a6e] font-semibold">
                   <Phone className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
                   {t.book}
