@@ -236,7 +236,7 @@ function Header() {
                 <button onClick={() => setIsModalOpen(false)}><X className="w-6 h-6 text-gray-400" /></button>
               </div>
               <div className="space-y-3">
-                <button onClick={() => { navigate('/book-appointment'); setIsModalOpen(false); }} className="w-full flex items-center p-4 border-2 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all text-left rtl:text-right">
+                <button onClick={() => { navigate('/contact'); setIsModalOpen(false); }} className="w-full flex items-center p-4 border-2 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all text-left rtl:text-right">
                   <Stethoscope className={`${isAr ? 'ml-4' : 'mr-4'} w-8 h-8 text-blue-600`} />
                   <div className="font-bold">{t.transplant}</div>
                 </button>
