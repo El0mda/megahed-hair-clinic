@@ -126,10 +126,10 @@ export default function BlogPostPage() {
               </div>
 
               <div className="space-y-4">
-                <button onClick={handleWhatsAppRedirect} className="w-full flex items-center gap-4 p-5 rounded-3xl border-2 border-[#3b82f6] bg-[#f8fbff] hover:shadow-lg transition-all">
+                <Link to="/contact" className="w-full flex items-center gap-4 p-5 rounded-3xl border-2 border-[#3b82f6] bg-[#f8fbff] hover:shadow-lg transition-all">
                   <div className="text-[#3b82f6]"><Stethoscope className="w-8 h-8" /></div>
                   <span className="font-bold text-lg text-[#1e3a6e]">{isAr ? 'استشارة زراعة الشعر' : 'Hair Transplant'}</span>
-                </button>
+                </Link>
 
                 <Link to="/book-appointment" className="w-full flex items-center gap-4 p-5 rounded-3xl border border-gray-100 bg-white hover:border-[#3b82f6] hover:shadow-lg transition-all">
                   <div className="text-[#3b82f6]"><VideoIcon className="w-8 h-8" /></div>
