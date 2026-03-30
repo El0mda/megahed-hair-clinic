@@ -91,19 +91,63 @@ function Footer() {
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Quick Links + Refund Policy */}
           <div>
             <span className="text-white font-semibold text-sm mb-4 block">
               {isAr ? 'روابط سريعة' : 'Quick Links'}
             </span>
             <ul className="space-y-2">
-              <li><Link to="/" className="text-sm hover:text-blue-400 transition-colors">{isAr ? 'الرئيسية' : 'Home'}</Link></li>
-              <li><Link to="/services" className="text-sm hover:text-blue-400 transition-colors">{isAr ? 'الخدمات' : 'Services'}</Link></li>
-              <li><Link to="/before-after" className="text-sm hover:text-blue-400 transition-colors">{isAr ? 'قبل وبعد' : 'Before/After Gallery'}</Link></li>
-              <li><Link to="/about" className="text-sm hover:text-blue-400 transition-colors">{isAr ? 'عن الدكتور' : 'About Dr. Megahed'}</Link></li>
-              <li><Link to="/blogs" className="text-sm hover:text-blue-400 transition-colors">{isAr ? 'المدونة' : 'Blog'}</Link></li>
-              <li><Link to="/contact" className="text-sm hover:text-blue-400 transition-colors">{isAr ? 'احجز استشارة' : 'Book Consultation'}</Link></li>
+              <li>
+                <Link to="/" className="text-sm hover:text-blue-400 transition-colors">
+                  {isAr ? 'الرئيسية' : 'Home'}
+                </Link>
+              </li>
+              <li>
+                <Link to="/services" className="text-sm hover:text-blue-400 transition-colors">
+                  {isAr ? 'الخدمات' : 'Services'}
+                </Link>
+              </li>
+              <li>
+                <Link to="/before-after" className="text-sm hover:text-blue-400 transition-colors">
+                  {isAr ? 'قبل وبعد' : 'Before/After Gallery'}
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" className="text-sm hover:text-blue-400 transition-colors">
+                  {isAr ? 'عن الدكتور' : 'About Dr. Megahed'}
+                </Link>
+              </li>
+              <li>
+                <Link to="/blogs/articles" className="text-sm hover:text-blue-400 transition-colors">
+                  {isAr ? 'تثقيف المرضى — مقالات' : 'Patient Education — Articles'}
+                </Link>
+              </li>
+              <li>
+                <Link to="/blogs/videos" className="text-sm hover:text-blue-400 transition-colors">
+                  {isAr ? 'تثقيف المرضى — فيديوهات' : 'Patient Education — Videos'}
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="text-sm hover:text-blue-400 transition-colors">
+                  {isAr ? 'احجز استشارة' : 'Book Consultation'}
+                </Link>
+              </li>
             </ul>
+
+            {/* Refund Policy — directly under Quick Links */}
+            <div className="mt-8">
+              <span className="text-white font-semibold text-sm mb-4 block">
+                {isAr ? 'سياسة الاسترداد' : 'Refund Policy'}
+              </span>
+              <ul className="space-y-2">
+                {refundPolicy.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-400">
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
+                    {isAr ? item.ar : item.en}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* Branches */}
@@ -167,25 +211,11 @@ function Footer() {
 
         </div>
 
-        {/* Refund Policy */}
-        <div className="border-t border-gray-800 mt-10 pt-8">
-          <span className="text-white font-semibold text-sm mb-4 block">
-            {isAr ? 'سياسة الاسترداد' : 'Refund Policy'}
-          </span>
-          <ul className="space-y-2">
-            {refundPolicy.map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-gray-400">
-                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
-                {isAr ? item.ar : item.en}
-              </li>
-            ))}
-          </ul>
-        </div>
-
         {/* Bottom bar */}
         <div className="border-t border-gray-800 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-400">
-            © {new Date().getFullYear()} Dr. Megahed Hair Transplant Clinic. {isAr ? 'جميع الحقوق محفوظة.' : 'All rights reserved.'}
+            © {new Date().getFullYear()} Dr. Megahed Hair Transplant Clinic.{' '}
+            {isAr ? 'جميع الحقوق محفوظة.' : 'All rights reserved.'}
           </p>
           <div className="flex space-x-3">
             <a href="https://www.facebook.com/DrAhmedMegahedHairClinic" target="_blank" rel="noreferrer" className="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors">
