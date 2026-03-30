@@ -36,16 +36,34 @@ const branches = [
   },
 ];
 
+const refundPolicy = [
+  {
+    en: '48 hours or more before the appointment — full refund.',
+    ar: 'قبل الموعد بـ 48 ساعة أو أكثر — استرداد كامل.',
+  },
+  {
+    en: 'Within 24 hours of the appointment — 50% refund.',
+    ar: 'خلال 24 ساعة قبل الموعد — استرداد 50٪.',
+  },
+  {
+    en: 'Same day cancellation — non-refundable.',
+    ar: 'إلغاء في يوم الموعد — لا يحق استرداد أي رسوم.',
+  },
+  {
+    en: 'After the consultation is completed — non-refundable.',
+    ar: 'بعد إتمام الاستشارة — رسوم غير قابلة للاسترداد.',
+  },
+];
+
 function Footer() {
   const { isAr } = useLang();
 
-  // Helper to generate WhatsApp URL with custom message
   const getWhatsAppLink = (number) => {
     const cleanNumber = number.replace(/\D/g, '');
     const message = encodeURIComponent(
-      isAr 
-        ? "مرحباً دكتور أحمد، أود الاستفسار عن خدمات عيادة الشعر." 
-        : "Hello Dr. Ahmed, I would like to inquire about your hair clinic services."
+      isAr
+        ? 'مرحباً دكتور أحمد، أود الاستفسار عن خدمات عيادة الشعر.'
+        : 'Hello Dr. Ahmed, I would like to inquire about your hair clinic services.'
     );
     return `https://wa.me/${cleanNumber}?text=${message}`;
   };
@@ -98,22 +116,22 @@ function Footer() {
                 <div key={i} className="bg-gray-800 rounded-xl p-4 space-y-2 flex flex-col h-full">
                   <p className="text-white font-semibold text-sm">{isAr ? b.name : b.nameEn}</p>
                   <p className="text-blue-400 text-[11px] leading-tight mb-1">{isAr ? b.service : b.serviceEn}</p>
-                  
+
                   <div className="flex items-start gap-2">
                     <MapPin className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 mt-0.5" />
                     <p className="text-xs text-gray-400 leading-relaxed">{isAr ? b.address : b.addressEn}</p>
                   </div>
 
-                  {/* Phone Numbers - NOW REDIRECT TO WHATSAPP */}
+                  {/* Phone Numbers */}
                   <div className="flex items-start gap-2 mt-auto">
                     <Phone className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 mt-0.5" />
                     <div className="space-y-0.5">
                       {b.phones.map((p, j) => (
-                        <a 
-                          key={j} 
-                          href={getWhatsAppLink(p)} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
+                        <a
+                          key={j}
+                          href={getWhatsAppLink(p)}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="block text-xs text-gray-300 hover:text-blue-400 transition-colors"
                         >
                           {p}
@@ -129,11 +147,11 @@ function Footer() {
                       </svg>
                       <div className="space-y-0.5">
                         {b.whatsapp.map((w, j) => (
-                          <a 
-                            key={j} 
-                            href={getWhatsAppLink(w)} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
+                          <a
+                            key={j}
+                            href={getWhatsAppLink(w)}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="block text-xs text-gray-300 hover:text-green-400 transition-colors"
                           >
                             {w}
@@ -147,6 +165,21 @@ function Footer() {
             </div>
           </div>
 
+        </div>
+
+        {/* Refund Policy */}
+        <div className="border-t border-gray-800 mt-10 pt-8">
+          <span className="text-white font-semibold text-sm mb-4 block">
+            {isAr ? 'سياسة الاسترداد' : 'Refund Policy'}
+          </span>
+          <ul className="space-y-2">
+            {refundPolicy.map((item, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm text-gray-400">
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
+                {isAr ? item.ar : item.en}
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* Bottom bar */}
