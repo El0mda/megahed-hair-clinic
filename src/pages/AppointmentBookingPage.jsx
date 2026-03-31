@@ -407,7 +407,7 @@ const validateForm = () => {
     }
     setIsSubmitting(true);
 
-    const payload = new FormData();
+    const payload = JSON.stringify(formData);
 
     // Text fields and arrays
     const photoKeys = ['photoFrontal', 'photoTop', 'photoRightSide', 'photoCrown', 'photoBackNeckline', 'photoLeftSide', 'photoBack', 'photoDonorArea'];
@@ -462,6 +462,9 @@ const validateForm = () => {
     try {
       const response = await fetch(webhookUrl, {
         method: 'POST',
+          headers: {
+    'Content-Type': 'application/json'  // ← add this
+  },
         body: payload,
         signal: controller.signal
         // DO NOT set Content-Type header — browser sets it automatically with boundary for FormData
