@@ -57,6 +57,7 @@ const refundPolicy = [
 
 function Footer() {
   const { isAr } = useLang();
+  const [refundOpen, setRefundOpen] = React.useState(false);
 
   const getWhatsAppLink = (number) => {
     const cleanNumber = number.replace(/\D/g, '');
@@ -135,19 +136,47 @@ function Footer() {
             </ul>
 
             {/* Refund Policy — directly under Quick Links */}
-            <div className="mt-8">
-              <span className="text-white font-semibold text-sm mb-4 block">
-                {isAr ? 'سياسة الاسترداد' : 'Refund Policy'}
-              </span>
-              <ul className="space-y-2">
-                {refundPolicy.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-400">
-                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
-                    {isAr ? item.ar : item.en}
-                  </li>
-                ))}
-              </ul>
-            </div>
+{/* Refund Policy — collapsible tab under Quick Links */}
+{/* Refund Policy — button tab style */}
+<div className="mt-8">
+  <button
+    onClick={() => setRefundOpen((prev) => !prev)}
+    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border transition-colors duration-200 ${
+      refundOpen
+        ? 'bg-blue-600 border-blue-600 text-white'
+        : 'bg-transparent border-gray-600 text-gray-300 hover:border-blue-500 hover:text-blue-400'
+    }`}
+  >
+    <svg
+      className="w-3.5 h-3.5 flex-shrink-0"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M2 4h12M2 8h8M2 12h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+    {isAr ? 'سياسة الاسترداد' : 'Refund Policy'}
+    <svg
+      className={`w-3.5 h-3.5 transition-transform duration-200 ${refundOpen ? 'rotate-180' : ''}`}
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  </button>
+
+  {refundOpen && (
+    <ul className="mt-3 space-y-2 pl-1">
+      {refundPolicy.map((item, i) => (
+        <li key={i} className="flex items-start gap-2 text-sm text-gray-400">
+          <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
+          {isAr ? item.ar : item.en}
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
           </div>
 
           {/* Branches */}
