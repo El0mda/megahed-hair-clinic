@@ -407,84 +407,79 @@ const validateForm = () => {
     }
     setIsSubmitting(true);
 
-    const payload = JSON.stringify(formData);
+    // ✅ FormData — NOT JSON.stringify
+const payload = new FormData();
 
-    // Text fields and arrays
-    const photoKeys = ['photoFrontal', 'photoTop', 'photoRightSide', 'photoCrown', 'photoBackNeckline', 'photoLeftSide', 'photoBack', 'photoDonorArea'];
+// Text fields and arrays
+const photoKeys = ['photoFrontal', 'photoTop', 'photoRightSide', 'photoCrown', 'photoBackNeckline', 'photoLeftSide', 'photoBack', 'photoDonorArea'];
 
-    Object.entries(formData).forEach(([key, value]) => {
-      // Skip photo fields and labWorkupFiles — handled separately
-      if (photoKeys.includes(key)) return;
-      if (key === 'labWorkupFiles') return;
-      if (key === 'hairLossPatternOtherFile') return;
+Object.entries(formData).forEach(([key, value]) => {
+  if (photoKeys.includes(key)) return;
+  if (key === 'labWorkupFiles') return;
+  if (key === 'hairLossPatternOtherFile') return;
+  if (Array.isArray(value)) {
+    payload.append(key, value.join(', '));
+  } else if (typeof value === 'boolean') {
+    payload.append(key, value ? 'true' : 'false');
+  } else if (value !== null && value !== undefined && value !== '') {
+    payload.append(key, value);
+  }
+});
 
-      if (Array.isArray(value)) {
-        payload.append(key, value.join(', '));
-      } else if (typeof value === 'boolean') {
-        payload.append(key, value ? 'true' : 'false');
-      } else if (value !== null && value !== undefined && value !== '') {
-        payload.append(key, value);
-      }
-    });
+// Single photo files
+photoKeys.forEach(key => {
+  const file = formData[key];
+  if (file instanceof File) {
+    payload.append(key, file, file.name);
+  }
+});
 
-    // Single photo files
-    photoKeys.forEach(key => {
-      const file = formData[key];
-      if (file instanceof File) {
-        payload.append(key, file, file.name);
-      }
-    });
-
-    // Lab workup files (multiple)
-    if (Array.isArray(formData.labWorkupFiles)) {
-      formData.labWorkupFiles.forEach((file, index) => {
-        if (file instanceof File) {
-          payload.append(`labWorkupFile_${index + 1}`, file, file.name);
-        }
-      });
+// Lab workup files (multiple)
+if (Array.isArray(formData.labWorkupFiles)) {
+  formData.labWorkupFiles.forEach((file, index) => {
+    if (file instanceof File) {
+      payload.append(`labWorkupFile_${index + 1}`, file, file.name);
     }
-    
+  });
+}
 
-    // Hair loss pattern other file
-    if (formData.hairLossPatternOtherFile instanceof File) {
-      payload.append('hairLossPatternOtherFile', formData.hairLossPatternOtherFile, formData.hairLossPatternOtherFile.name);
-    }
+// Hair loss pattern other file
+if (formData.hairLossPatternOtherFile instanceof File) {
+  payload.append('hairLossPatternOtherFile', formData.hairLossPatternOtherFile, formData.hairLossPatternOtherFile.name);
+}
 
-    // Extra metadata
-    payload.append('pricingRegion', isEgyptUser ? 'Egypt' : 'International');
-    payload.append('submittedAt', new Date().toISOString());
-    payload.append('language', isAr ? 'Arabic' : 'English');
+// Extra metadata
+payload.append('pricingRegion', isEgyptUser ? 'Egypt' : 'International');
+payload.append('submittedAt', new Date().toISOString());
+payload.append('language', isAr ? 'Arabic' : 'English');
 
-    const webhookUrl = 'https://n8n.srv1116147.hstgr.cloud/webhook/8390f8a1-f7fd-4085-9a05-981533eec67f';
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s for file uploads
+const webhookUrl = 'https://n8n.srv1116147.hstgr.cloud/webhook/8390f8a1-f7fd-4085-9a05-981533eec67f';
+const controller = new AbortController();
+const timeoutId = setTimeout(() => controller.abort(), 60000);
 
-    try {
-      const response = await fetch(webhookUrl, {
-        method: 'POST',
-          headers: {
-    'Content-Type': 'application/json'  // ← add this
-  },
-        body: payload,
-        signal: controller.signal
-        // DO NOT set Content-Type header — browser sets it automatically with boundary for FormData
-      });
-      clearTimeout(timeoutId);
-      if (!response.ok) throw new Error(`Status ${response.status}`);
-      setFormData(INITIAL_STATE);
-      setStep('success');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch (error) {
-      clearTimeout(timeoutId);
-      let msg = isAr ? "تعذر الإرسال. " : "Unable to submit. ";
-      if (error.name === 'AbortError') msg += isAr ? "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى." : "Request timed out. Please try again.";
-      else if (error.message.includes('Failed to fetch')) msg += isAr ? "خطأ في الاتصال. تحقق من الإنترنت وحاول مجدداً." : "Connection error. Check your internet and try again.";
-      else msg += isAr ? "يرجى المحاولة مجدداً بعد لحظات." : `Please try again. (${error.message})`;
-      toast({ title: isAr ? "فشل الإرسال" : "Submission Failed", description: msg, variant: "destructive" });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+try {
+  const response = await fetch(webhookUrl, {
+    method: 'POST',
+    // ✅ NO Content-Type header — browser sets multipart/form-data automatically
+    body: payload,
+    signal: controller.signal
+  });
+  clearTimeout(timeoutId);
+  if (!response.ok) throw new Error(`Status ${response.status}`);
+  setFormData(INITIAL_STATE);
+  setStep('success');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+} catch (error) {
+  clearTimeout(timeoutId);
+  let msg = isAr ? "تعذر الإرسال. " : "Unable to submit. ";
+  if (error.name === 'AbortError') msg += isAr ? "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى." : "Request timed out. Please try again.";
+  else if (error.message.includes('Failed to fetch')) msg += isAr ? "خطأ في الاتصال. تحقق من الإنترنت وحاول مجدداً." : "Connection error. Check your internet and try again.";
+  else msg += isAr ? "يرجى المحاولة مجدداً بعد لحظات." : `Please try again. (${error.message})`;
+  toast({ title: isAr ? "فشل الإرسال" : "Submission Failed", description: msg, variant: "destructive" });
+} finally {
+  setIsSubmitting(false);
+}
+  }
 
   // ── Shared UI helpers ─────────────────────────────────────────────────────
   const SectionTitle = ({ icon: Icon, title }) => (
