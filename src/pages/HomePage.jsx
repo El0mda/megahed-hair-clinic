@@ -119,20 +119,8 @@ function ReviewsSection({ isAr }) {
       </div>
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
-          <div
-            className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full"
-            style={{
-              background: "rgba(255,255,255,0.07)",
-              border: "1px solid rgba(255,255,255,0.12)",
-            }}
-          >
-            <Star size={13} style={{ fill: "#f59e0b", stroke: "none" }} />
-            <span className="text-xs font-bold tracking-widest uppercase text-white/60">
-              {isAr ? "آراء مرضانا" : "Patient Reviews"}
-            </span>
-          </div>
           <h2 className="text-3xl sm:text-4xl font-black text-white leading-tight">
-            {isAr ? "ماذا يقول مرضانا" : "What Our Patients Say"}
+            {isAr ? "تقييمات عيادة د. مجاهد" : "Dr.Megahed hair clinic reviews"}
           </h2>
         </div>
         <div className="relative">
@@ -206,9 +194,6 @@ function ReviewsSection({ isAr }) {
                     {isAr
                       ? review.patient_name
                       : review.patient_name_en || review.patient_name}
-                  </p>
-                  <p className="text-white/40 text-xs mt-0.5">
-                    {isAr ? "مريض دكتور مجاهد" : "Dr. Megahed Patient"}
                   </p>
                 </div>
               </div>
