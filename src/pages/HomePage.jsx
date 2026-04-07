@@ -195,11 +195,17 @@ function ReviewsSection({ isAr }) {
                     border: "2px solid rgba(255,255,255,0.2)",
                   }}
                 >
-                  {review.patient_name?.charAt(0)?.toUpperCase()}
+                  {isAr
+                    ? review.patient_name?.charAt(0)?.toUpperCase()
+                    : (review.patient_name_en || review.patient_name)
+                        ?.charAt(0)
+                        ?.toUpperCase()}
                 </div>
                 <div>
                   <p className="text-white font-bold text-sm">
-                    {review.patient_name}
+                    {isAr
+                      ? review.patient_name
+                      : review.patient_name_en || review.patient_name}
                   </p>
                   <p className="text-white/40 text-xs mt-0.5">
                     {isAr ? "مريض دكتور مجاهد" : "Dr. Megahed Patient"}
@@ -559,6 +565,9 @@ function HomePage() {
         </div>
       </section>
 
+      {/* ── REVIEWS ── */}
+      <ReviewsSection isAr={isAr} />
+
       {/* Services */}
       <section className="py-16 bg-white" dir={isAr ? "rtl" : "ltr"}>
         <div className="max-w-7xl mx-auto px-4">
@@ -609,9 +618,6 @@ function HomePage() {
 
       {/* ── BEFORE & AFTER PREVIEW ── */}
       <BeforeAfterPreview isAr={isAr} />
-
-      {/* ── REVIEWS ── */}
-      <ReviewsSection isAr={isAr} />
 
       {/* CTA */}
       <section

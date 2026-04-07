@@ -68,6 +68,7 @@ export default function AdminPage() {
   // Review form state
   const [reviewForm, setReviewForm] = useState({
     patient_name: "",
+    patient_name_en: "", // ← add this
     review_text: "",
     review_text_en: "",
     stars: 5,
@@ -134,8 +135,10 @@ export default function AdminPage() {
       desc_en: "",
       desc_ar: "",
     });
+    // inside resetForm()
     setReviewForm({
       patient_name: "",
+      patient_name_en: "", // ← add this
       review_text: "",
       review_text_en: "",
       stars: 5,
@@ -182,6 +185,7 @@ export default function AdminPage() {
     } else if (activeTab === "reviews") {
       setReviewForm({
         patient_name: item.patient_name || "",
+        patient_name_en: item.patient_name_en || "", // ← add this
         review_text: item.review_text || "",
         review_text_en: item.review_text_en || "",
         stars: item.stars || 5,
@@ -385,21 +389,46 @@ export default function AdminPage() {
             {activeTab === "reviews" ? (
               <div className="space-y-8">
                 {/* Patient Name */}
+                {/* Patient Name - Arabic & English */}
                 <div className="space-y-2">
                   <label className="text-xs font-black uppercase tracking-widest text-[#1e3a6e]">
                     Patient Name
                   </label>
-                  <input
-                    value={reviewForm.patient_name}
-                    onChange={(e) =>
-                      setReviewForm({
-                        ...reviewForm,
-                        patient_name: e.target.value,
-                      })
-                    }
-                    placeholder="e.g. Mohamed Ali"
-                    className="w-full border-2 border-gray-50 rounded-2xl px-5 py-3 text-sm outline-none focus:border-[#1e3a6e] transition-all"
-                  />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase">
+                        Arabic اسم المريض
+                      </label>
+                      <input
+                        dir="rtl"
+                        value={reviewForm.patient_name}
+                        onChange={(e) =>
+                          setReviewForm({
+                            ...reviewForm,
+                            patient_name: e.target.value,
+                          })
+                        }
+                        placeholder="مثال: محمد علي"
+                        className="w-full border-2 border-gray-50 rounded-2xl px-5 py-3 text-sm outline-none focus:border-[#1e3a6e] transition-all"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase">
+                        English
+                      </label>
+                      <input
+                        value={reviewForm.patient_name_en}
+                        onChange={(e) =>
+                          setReviewForm({
+                            ...reviewForm,
+                            patient_name_en: e.target.value,
+                          })
+                        }
+                        placeholder="e.g. Mohamed Ali"
+                        className="w-full border-2 border-gray-50 rounded-2xl px-5 py-3 text-sm outline-none focus:border-[#1e3a6e] transition-all"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Review Text - Arabic & English */}
