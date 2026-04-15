@@ -415,7 +415,7 @@ function HomePage() {
       titleEn: "10+ Years Experience",
       titleAr: "+10 سنوات خبرة",
       descEn: "Experience in hair loss management and restoration",
-      descAr: "في إدارة تساقط الشعر وزراعته",
+      descAr: "في علاج تساقط الشعر وزراعته",
     },
   ];
 

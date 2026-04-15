@@ -753,12 +753,12 @@ try {
                             className={`p-3 rounded-xl border-2 w-full ${isEgyptUser ? 'bg-green-50 border-green-300' : 'bg-[#1e3a6e]/10 border-blue-300'}`}
                           >
                             <p className={`text-xs font-bold ${isEgyptUser ? 'text-green-900' : 'text-[#1e3a6e]'}`}>
-                              Consultation Fees
+                              {isAr ? 'رسوم الاستشارة' : 'Consultation Fees'}
                             </p>
                             <p className={`text-xs mt-0.5 ${isEgyptUser ? 'text-green-700' : 'text-[#1e3a6e]'}`}>
                               {isEgyptUser
-                                ? 'Initial: 600 EGP • Follow-up: 300 EGP'
-                                : 'Initial: $90 USD • Follow-up: $50 USD'}
+                                ? (isAr ? 'الكشف الأول: ٦٠٠ جنيه • المتابعة: ٣٠٠ جنيه' : 'Initial: 600 EGP • Follow-up: 300 EGP')
+                                : (isAr ? 'الكشف الأول: ٩٠ دولار • المتابعة: ٥٠ دولار' : 'Initial: $90 USD • Follow-up: $50 USD')}
                             </p>
                           </motion.div>
                         )}

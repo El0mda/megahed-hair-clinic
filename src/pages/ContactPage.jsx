@@ -62,7 +62,7 @@ const BENEFITS = {
   ],
   ar: [
     'استشارة مخصصة لك',
-    'خطة علاجية و عرض سعر مخصص لك',
+    'تقييم حالتك لزراعة الشعر و عرض سعر مخصص لك',
     'تقييم بدون أي التزام',
     'رد خلال 24 ساعة',
   ],
@@ -248,7 +248,7 @@ export default function ContactPage() {
             </h1>
             <p className="text-xl max-w-3xl mx-auto" style={{ color: '#a8c4e8' }}>
               {isAr
-                ? 'ارسل لنا صور شعرك واحصل على خطة علاجية وعرض سعر مخصص لك'
+                ? 'ارسل لنا صور شعرك واحصل على تقييم حالتك لزراعة الشعر وعرض سعر مخصص لك'
                 : 'Share your hair photos and receive a personalised treatment plan and quote'}
             </p>
           </motion.div>
