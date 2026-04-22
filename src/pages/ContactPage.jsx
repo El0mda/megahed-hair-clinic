@@ -146,6 +146,7 @@ export default function ContactPage() {
     if (!form.sex) e.sex = isAr ? 'الجنس مطلوب' : 'Please select your sex';
     if (!form.region) e.region = isAr ? 'المنطقة مطلوبة' : 'Region is required';
     if (!form.procedure) e.procedure = isAr ? 'الإجراء مطلوب' : 'Procedure of interest is required';
+    if (files.length === 0) e.files = isAr ? 'يرجى رفع صورة واحدة على الأقل' : 'Please upload at least one photo';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -153,6 +154,7 @@ export default function ContactPage() {
   const handleFiles = (incoming) => {
     const allowed = Array.from(incoming).filter(f => f.type.startsWith('image/'));
     setFiles(prev => [...prev, ...allowed].slice(0, 5));
+    setErrors(e => ({ ...e, files: '' }));
   };
 
   const handleSubmit = async (e) => {
@@ -490,7 +492,7 @@ export default function ContactPage() {
                 {/* Photo Upload */}
                 <div>
                   <p className="text-sm font-semibold mb-1" style={{ color: '#1e3a6e' }}>
-                    {isAr ? 'صور الشعر (اختياري)' : 'Hair Photos (optional)'}
+                    {isAr ? 'صور الشعر *' : 'Hair Photos *'}
                   </p>
                   <p className="text-xs mb-3 leading-relaxed" style={{ color: '#5a7099' }}>
                     {isAr
@@ -559,6 +561,7 @@ export default function ContactPage() {
                       </motion.div>
                     )}
                   </AnimatePresence>
+                  {errors.files && <p className="text-red-500 text-xs mt-1">{errors.files}</p>}
                 </div>
 
                 {/* Submit */}

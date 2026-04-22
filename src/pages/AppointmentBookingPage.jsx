@@ -1362,26 +1362,24 @@ try {
                 {/* ══ 7. PHOTO UPLOAD ══ */}
                 <div>
                   <SectionTitle icon={Camera} title={t("Photo Upload", "تحميل الصور")} />
-                  <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4 flex gap-3">
-                    <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-bold text-amber-900 mb-1.5">{t("Photo Quality Requirements", "متطلبات جودة الصور")}</p>
-                      <ul className="text-xs text-amber-800 space-y-1 leading-relaxed">
-                        <li>• {t("Good lighting — natural daylight or bright indoor light preferred", "إضاءة جيدة — يفضل الضوء الطبيعي أو الإضاءة الداخلية الساطعة")}</li>
-                        <li>• {t("Photos must be sharp and in focus", "يجب أن تكون الصورة واضحة")}</li>
-                        <li>• {t("Plain background if possible", "خلفية موحدة اللون إن أمكن")}</li>
-                        <li>• {t("Hair should be dry and unstyled", "يجب أن يكون الشعر جافاً وغير مصفف")}</li>
-                        <li>• {t("High resolution preferred (min. 2MP)", "دقة عالية مفضلة (الحد الأدنى 2 ميجابيكسل)")}</li>
-                      </ul>
+                  <div className="bg-[#1e3a6e]/5 border border-[#1e3a6e]/20 rounded-xl p-5 mb-5">
+                    <p className="text-sm font-bold text-[#1e3a6e] mb-3">
+                      {t("Please take your photos like the examples below", "يرجى التقاط صورك كما في الأمثلة أدناه")}
+                    </p>
+                    <div className="grid grid-cols-5 gap-2">
+                      {[
+                        { src: '/1.png', en: 'Frontal view — hair combed back', ar: 'صورة أمامية — الشعر مرفوع للخلف' },
+                        { src: '/2.png', en: 'Top view — looking down, chin to chest', ar: 'صورة من أعلى — انظر للأسفل وذقنك نحو صدرك' },
+                        { src: '/3.png', en: 'Right side — hair combed back', ar: 'صورة جانبية يمين — الشعر مرفوع للخلف' },
+                        { src: '/4.png', en: 'Left side — hair combed back', ar: 'صورة جانبية يسار — الشعر مرفوع للخلف' },
+                        { src: '/5.png', en: 'Back/neckline — from behind', ar: 'صورة من الخلف — تظهر خط الرقبة' },
+                      ].map(view => (
+                        <div key={view.src} className="text-center">
+                          <img src={view.src} alt={isAr ? view.ar : view.en} className="w-full h-24 object-cover rounded-lg border border-gray-300 mb-1.5" />
+                          <p className="text-xs text-[#1e3a6e] font-medium leading-snug">{isAr ? view.ar : view.en}</p>
+                        </div>
+                      ))}
                     </div>
-                  </div>
-                  <div className="bg-[#1e3a6e]/10 border border-blue-200 rounded-xl p-5 mb-5">
-                    <p className="text-xs font-bold text-[#1e3a6e] uppercase tracking-widest mb-2">
-                      {t("We need the following specific views:", "نحتاج المناظير المحددة التالية:")}
-                    </p>
-                    <p className="text-sm text-[#1e3a6e] leading-relaxed">
-                      {isAr ? "يرجى التقاط صور واضحة في إضاءة جيدة واتباع مواضع الصور الموضحة. يرجى تجنب إرسال صور غير واضحة." : "Please take clear photographs in good lighting and follow the illustrated photo positions. Kindly avoid submitting unclear images."}
-                    </p>
                   </div>
                   <div className="space-y-3">
                     {photoFields.map((field, idx) => (
