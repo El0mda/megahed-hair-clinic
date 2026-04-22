@@ -2565,54 +2565,6 @@ export default function AppointmentBookingPage() {
                     icon={Camera}
                     title={t("Photo Upload", "تحميل الصور")}
                   />
-                  <div className="bg-[#1e3a6e]/5 border border-[#1e3a6e]/20 rounded-xl p-5 mb-5">
-                    <p className="text-sm font-bold text-[#1e3a6e] mb-3">
-                      {t(
-                        "Please take your photos like the examples below",
-                        "يرجى التقاط صورك كما في الأمثلة أدناه",
-                      )}
-                    </p>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
-                      {[
-                        {
-                          src: "/1.png",
-                          en: "Frontal view — hair combed back",
-                          ar: "صورة أمامية — الشعر مرفوع للخلف",
-                        },
-                        {
-                          src: "/2.png",
-                          en: "Top view — looking down, chin to chest",
-                          ar: "صورة من أعلى — انظر للأسفل وذقنك نحو صدرك",
-                        },
-                        {
-                          src: "/3.png",
-                          en: "Right side — hair combed back",
-                          ar: "صورة جانبية يمين — الشعر مرفوع للخلف",
-                        },
-                        {
-                          src: "/4.png",
-                          en: "Left side — hair combed back",
-                          ar: "صورة جانبية يسار — الشعر مرفوع للخلف",
-                        },
-                        {
-                          src: "/5.png",
-                          en: "Back/neckline — from behind",
-                          ar: "صورة من الخلف — تظهر خط الرقبة",
-                        },
-                      ].map((view) => (
-                        <div key={view.src} className="text-center">
-                          <img
-                            src={view.src}
-                            alt={isAr ? view.ar : view.en}
-                            className="w-full h-24 object-cover rounded-lg border border-gray-300 mb-1.5"
-                          />
-                          <p className="text-xs text-[#1e3a6e] font-medium leading-snug">
-                            {isAr ? view.ar : view.en}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
                   <div className="space-y-3">
                     {photoFields.map((field, idx) => (
                       <div
