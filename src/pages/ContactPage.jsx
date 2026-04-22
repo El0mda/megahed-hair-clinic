@@ -121,9 +121,9 @@ export default function ContactPage() {
   const [form, setForm] = useState({
     firstName: '', lastName: '', email: '',
     countryCode: '+20', phone: '',
-    sex: '', region: '', procedure: '',
+    age: '', sex: '', region: '', procedure: '',
     hairLossDuration: '',
-    dailyShedding: [],
+    dailyShedding: '',
     message: '',
   });
   const [errors, setErrors] = useState({});
@@ -142,6 +142,7 @@ export default function ContactPage() {
     if (!form.lastName.trim()) e.lastName = isAr ? 'اسم العائلة مطلوب' : 'Last name is required';
     if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) e.email = isAr ? 'بريد إلكتروني غير صالح' : 'Valid email is required';
     if (!form.phone.trim()) e.phone = isAr ? 'رقم الهاتف مطلوب' : 'Phone number is required';
+    if (!form.age || isNaN(form.age) || form.age < 1 || form.age > 120) e.age = isAr ? 'العمر مطلوب' : 'Valid age is required';
     if (!form.sex) e.sex = isAr ? 'الجنس مطلوب' : 'Please select your sex';
     if (!form.region) e.region = isAr ? 'المنطقة مطلوبة' : 'Region is required';
     if (!form.procedure) e.procedure = isAr ? 'الإجراء مطلوب' : 'Procedure of interest is required';
@@ -176,6 +177,7 @@ export default function ContactPage() {
         lastName: form.lastName,
         email: form.email,
         phone: `${form.countryCode}${form.phone}`,
+        age: form.age,
         sex: form.sex,
         region: form.region,
         hadTransplantBefore: form.procedure,
@@ -386,6 +388,18 @@ export default function ContactPage() {
                       <option value="female">{isAr ? 'أنثى' : 'Female'}</option>
                     </select>
                   </Field>
+
+                  <Field label={isAr ? 'العمر *' : 'Age *'} error={errors.age}>
+                    <input
+                      type="number"
+                      min="1"
+                      max="120"
+                      value={form.age}
+                      onChange={e => set('age', e.target.value)}
+                      placeholder={isAr ? 'أدخل عمرك' : 'Enter your age'}
+                      className={inputCls(errors.age)}
+                    />
+                  </Field>
                 </div>
 
                 {/* Region */}
@@ -441,9 +455,6 @@ export default function ContactPage() {
 
                 {/* Daily Shedding */}
                 <Field label={isAr ? 'ما كمية تساقط الشعر يومياً؟ (شعرة في اليوم)' : 'How much hair do you shed daily? (hairs/day)'}>
-                  <p className="text-xs mb-2" style={{ color: '#7a96c2' }}>
-                    {isAr ? 'يمكن اختيار أكثر من خيار' : 'You can select more than one'}
-                  </p>
                   <div className="grid grid-cols-3 gap-2">
                     {[
                       { value: '<50', en: 'Less than 50', ar: 'أقل من ٥٠' },
@@ -453,23 +464,15 @@ export default function ContactPage() {
                       { value: '200+', en: 'More than 200', ar: 'أكثر من ٢٠٠' },
                       { value: '300+', en: 'More than 300', ar: 'أكثر من ٣٠٠' },
                       { value: 'unsure', en: 'Not sure', ar: 'غير متأكد' },
-                    ].map(opt => {
-                      const selected = form.dailyShedding.includes(opt.value);
-                      return (
-                        <PillButton
-                          key={opt.value}
-                          selected={selected}
-                          onClick={() => {
-                            const next = selected
-                              ? form.dailyShedding.filter(v => v !== opt.value)
-                              : [...form.dailyShedding, opt.value];
-                            set('dailyShedding', next);
-                          }}
-                        >
-                          {isAr ? opt.ar : opt.en}
-                        </PillButton>
-                      );
-                    })}
+                    ].map(opt => (
+                      <PillButton
+                        key={opt.value}
+                        selected={form.dailyShedding === opt.value}
+                        onClick={() => set('dailyShedding', form.dailyShedding === opt.value ? '' : opt.value)}
+                      >
+                        {isAr ? opt.ar : opt.en}
+                      </PillButton>
+                    ))}
                   </div>
                 </Field>
 

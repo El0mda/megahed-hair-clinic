@@ -1,4 +1,2 @@
 ## Pages
-- [Untitled Page](/beforeafter): View real patient results from Dr. Ahmed Megahed
-- [Untitled Page](/contact): No description available
-- [Untitled Page](/services): No description available
+- [Untitled Page](/beforeafter): No description available
