@@ -16,6 +16,7 @@ import {
   Star,
   MessageSquare,
 } from "lucide-react";
+import AffiliatePanel from "@/components/AffiliatePanel";
 
 const ADMIN_PASSWORD = "megahed2024";
 
@@ -80,6 +81,10 @@ export default function AdminPage() {
   }, [authed, activeTab]);
 
   const fetchData = async () => {
+    if (activeTab === "affiliate") {
+      setItems([]);
+      return;
+    }
     setLoading(true);
     try {
       let data, error;
@@ -854,6 +859,7 @@ export default function AdminPage() {
                 { key: "blogs", label: "Articles" },
                 { key: "gallery", label: "Before & After" },
                 { key: "reviews", label: "Reviews" },
+                { key: "affiliate", label: "Affiliate" },
               ].map(({ key, label }) => (
                 <button
                   key={key}
@@ -866,20 +872,22 @@ export default function AdminPage() {
             </div>
           </div>
           <div className="flex gap-3">
-            <button
-              onClick={() => {
-                resetForm();
-                setView("form");
-              }}
-              className="bg-[#1e3a6e] text-white px-8 py-4 rounded-2xl font-bold flex items-center gap-2 shadow-xl hover:-translate-y-1 transition-all"
-            >
-              <Plus size={20} /> New{" "}
-              {activeTab === "blogs"
-                ? "Post"
-                : activeTab === "gallery"
-                  ? "Case"
-                  : "Review"}
-            </button>
+            {activeTab !== "affiliate" && (
+              <button
+                onClick={() => {
+                  resetForm();
+                  setView("form");
+                }}
+                className="bg-[#1e3a6e] text-white px-8 py-4 rounded-2xl font-bold flex items-center gap-2 shadow-xl hover:-translate-y-1 transition-all"
+              >
+                <Plus size={20} /> New{" "}
+                {activeTab === "blogs"
+                  ? "Post"
+                  : activeTab === "gallery"
+                    ? "Case"
+                    : "Review"}
+              </button>
+            )}
             <button
               onClick={logout}
               className="p-4 bg-white text-gray-400 rounded-2xl shadow-sm hover:text-red-500 transition-all"
@@ -889,7 +897,9 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {loading ? (
+        {activeTab === "affiliate" ? (
+          <AffiliatePanel />
+        ) : loading ? (
           <div className="text-center py-20 text-gray-400 font-bold">
             Syncing...
           </div>

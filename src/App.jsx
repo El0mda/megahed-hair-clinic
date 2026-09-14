@@ -16,6 +16,7 @@ import BlogPostPage from '@/pages/BlogPostPage';
 import { Toaster } from '@/components/ui/toaster';
 import { LangSplash, useLang } from '@/components/Header';
 import { motion } from 'framer-motion';
+import { trackReferralVisit } from '@/lib/referral';
 
 // ─── Sticky Action Bar ────────────────────────────────────────────────────────
 function StickyActionBar() {
@@ -96,6 +97,11 @@ function WhatsAppFloat() {
 function AppContent() {
   const { hasChosen } = useLang();
   const location = useLocation();
+
+  // Log affiliate traffic once per session when arriving with ?ref=
+  useEffect(() => {
+    trackReferralVisit();
+  }, []);
 
   const isAdminPath = location.pathname.startsWith('/admin');
   const showOverlays = hasChosen && !isAdminPath;
