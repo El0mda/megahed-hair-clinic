@@ -5,8 +5,8 @@ import { supabase } from '@/lib/supabase';
 // To issue a link to a different company, change `code` here — past visits keep
 // their old code, so the dashboard history stays intact.
 export const PARTNER = {
-  code: 'partner1',
-  name: 'Partner Company',
+  code: 'kenana-medical-tourism',
+  name: 'Kenana Medical Tourism',
 };
 
 const VISITOR_KEY = 'mg_visitor_id';
