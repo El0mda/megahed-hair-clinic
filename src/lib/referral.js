@@ -52,7 +52,7 @@ const getVisitorId = () => {
 
 // The full link to hand to the company.
 export const buildReferralLink = (code = PARTNER.code) =>
-  `${window.location.origin}/book-appointment?ref=${encodeURIComponent(code)}`;
+  `${window.location.origin}/contact?ref=${encodeURIComponent(code)}`;
 
 // Logs one visit per browser session, so refreshes and in-app navigation don't
 // inflate the count. Call once, on app mount.
